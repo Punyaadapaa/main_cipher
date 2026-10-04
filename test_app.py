@@ -40,6 +40,36 @@ def test_dekripsi_hasil_kelompok_5(klien):
     assert dec.get_json()["result"] == "DUNIA"
 
 
+def test_hill_panjang_bukan_kelipatan_pulih_sempurna(klien):
+    # 11 huruf, blok 2 -> dipad; dekripsi harus persis 11 huruf semula
+    enc = klien.post("/api/text", data={
+        "cipher": "hill", "mode": "enc", "key": "3 3 2 5", "text": "HANIEFMENDO", "group": "0"})
+    dec = klien.post("/api/text", data={
+        "cipher": "hill", "mode": "dec", "key": "3 3 2 5", "text": enc.get_json()["result"], "group": "0"})
+    assert dec.get_json()["result"] == "HANIEFMENDO"
+
+
+def test_permutation_panjang_bukan_kelipatan_pulih_sempurna(klien):
+    enc = klien.post("/api/text", data={
+        "cipher": "permutation", "mode": "enc", "key": "3 1 4 2", "text": "HANIEFMENDO", "group": "0"})
+    dec = klien.post("/api/text", data={
+        "cipher": "permutation", "mode": "dec", "key": "3 1 4 2", "text": enc.get_json()["result"], "group": "0"})
+    assert dec.get_json()["result"] == "HANIEFMENDO"
+
+
+def test_otp_via_file_kunci(klien):
+    import string
+    kunci = ("".join(string.ascii_uppercase) * 4).encode()  # 104 huruf acak-pola
+    enc = klien.post("/api/text", data={
+        "cipher": "otp", "mode": "enc", "key": "", "text": "SERANG FAJAR", "group": "0",
+        "keyfile": (BytesIO(kunci), "otp_key.txt")}, content_type="multipart/form-data")
+    assert enc.status_code == 200
+    dec = klien.post("/api/text", data={
+        "cipher": "otp", "mode": "dec", "key": "", "text": enc.get_json()["result"], "group": "0",
+        "keyfile": (BytesIO(kunci), "otp_key.txt")}, content_type="multipart/form-data")
+    assert dec.get_json()["result"] == "SERANGFAJAR"
+
+
 def test_kunci_buruk_menghasilkan_json_400(klien):
     r = klien.post("/api/text", data={
         "cipher": "shift", "mode": "enc", "key": "3 4", "text": "HELLO", "group": "0"})

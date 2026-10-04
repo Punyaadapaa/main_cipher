@@ -133,6 +133,11 @@ def hill(data, key, enc, mod, keybytes=None):
     for i in range(0, len(data), n):
         blok = data[i:i + n]
         out += [sum(mat[r][c] * blok[c] for c in range(n)) % mod for r in range(n)]
+    if not enc and teks:
+        # buang padding 'X' (23) yang ditambahkan saat enkripsi (maks. n-1 buah)
+        for _ in range(n - 1):
+            if out and out[-1] == 23:
+                out.pop()
     return out
 
 
@@ -158,6 +163,11 @@ def permutation(data, key, enc, mod, keybytes=None):
             for j in range(m):
                 res[p[j] - 1] = blok[j]
             out += res
+    if not enc and teks:
+        # buang padding 'X' (23) yang ditambahkan saat enkripsi (maks. m-1 buah)
+        for _ in range(m - 1):
+            if out and out[-1] == 23:
+                out.pop()
     return out
 
 

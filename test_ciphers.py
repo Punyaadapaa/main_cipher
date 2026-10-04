@@ -101,6 +101,20 @@ def test_round_trip_teks_otp():
     assert S(run("otp", out, "", False, 26, keybytes=kunci)) == PESAN
 
 
+# ---------- padding blok (Hill/Permutation) harus dibuang saat dekripsi ----------
+
+def test_hill_padding_x_dibuang_saat_dekripsi():
+    # 5 huruf, blok 2 -> enkripsi memad 1 'X'; dekripsi harus kembali 5 huruf
+    out = run("hill", A("HELLO"), "3 3 2 5", True, 26)
+    assert S(run("hill", out, "3 3 2 5", False, 26)) == "HELLO"
+
+
+def test_permutation_padding_x_dibuang_saat_dekripsi():
+    # 5 huruf, blok 4 -> enkripsi memad 3 'X'; dekripsi harus kembali 5 huruf
+    out = run("permutation", A("HELLO"), "3 1 4 2", True, 26)
+    assert S(run("permutation", out, "3 1 4 2", False, 26)) == "HELLO"
+
+
 # ---------- mode file (mod 256, semua byte 0..255) ----------
 
 DATA_BYTES = list(os.urandom(300)) + [0, 255, 128, 10]

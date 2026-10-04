@@ -1,4 +1,4 @@
-// Logika antarmuka Classic Ciphers: kirim form ke /api/*, tampilkan hasil, unduh file.
+// Logika antarmuka Classic Ciphers (pipeline Plaintext → Cipher → Ciphertext).
 "use strict";
 const $ = id => document.getElementById(id);
 
@@ -12,13 +12,17 @@ const HINT = {
   otp: "Unggah file kunci. Jika kosong, isi kolom kunci dengan huruf kunci."
 };
 
-const hasil = { plain: "", cipher: "", blob: null, nama: null };
-
-const hanyaHuruf = s => s.toUpperCase().replace(/[^A-Z]/g, "");
-const kelompok5 = s => hanyaHuruf(s).replace(/(.{5})(?=.)/g, "$1 ");
+let mode = "enc";
+const hasil = { blob: null, nama: null };
 
 const tipeInput = () => document.querySelector('input[name="input_type"]:checked').value;
 const formatGroup = () => document.querySelector('input[name="group"]:checked').value;
+
+function setMode(m) {
+  mode = m;
+  $("btn-enc").classList.toggle("active", m === "enc");
+  $("btn-dec").classList.toggle("active", m === "dec");
+}
 
 function perbarui() {
   $("hint").textContent = HINT[$("cipher").value];
@@ -26,13 +30,15 @@ function perbarui() {
   const teks = tipeInput() === "teks";
   $("panel-teks").hidden = !teks;
   $("panel-file").hidden = teks;
-  $("fmt-card").hidden = !teks;
+  tampilOutputTeks(teks);
 }
-document.querySelectorAll('input[name="input_type"]').forEach(r => r.addEventListener("change", perbarui));
-$("cipher").addEventListener("change", perbarui);
-perbarui();
 
-function dataForm(mode) {
+function tampilOutputTeks(teks) {
+  $("out-area").hidden = !teks;
+  $("file-result").hidden = teks;
+}
+
+function dataForm() {
   const f = new FormData();
   f.append("cipher", $("cipher").value);
   f.append("mode", mode);
@@ -42,67 +48,43 @@ function dataForm(mode) {
   return f;
 }
 
-function sedangProses(status) {
-  $("btn-enc").disabled = status;
-  $("btn-dec").disabled = status;
-  $("btn-enc").textContent = status ? "Memproses…" : "Enkripsi!";
-  $("btn-dec").textContent = status ? "Memproses…" : "Dekripsi!";
-}
-
-function tampilkanHasilTeks(plain, cipher) {
-  hasil.plain = plain;
-  hasil.cipher = cipher;
-  $("out-plain").value = plain;
-  $("out-cipher").value = cipher;
-  $("grid-teks").hidden = false;
-  $("grid-file").hidden = true;
-  $("results").hidden = false;
-  $("dl-info").textContent = "Cipherteks tampil sesuai format yang dipilih — tombol Simpan menyimpannya ke file .txt";
-}
-
-async function prosesTeks(mode) {
-  const f = dataForm(mode);
+async function prosesTeks() {
+  const f = dataForm();
   f.append("text", $("text").value);
   f.append("group", formatGroup());
   const r = await fetch("/api/text", { method: "POST", body: f });
   const j = await r.json();
   if (!r.ok) { $("err").textContent = j.error; return; }
-  if (mode === "enc") {
-    tampilkanHasilTeks(hanyaHuruf($("text").value), j.result);
-  } else {
-    const cipherTampil = formatGroup() === "5" ? kelompok5($("text").value) : hanyaHuruf($("text").value);
-    tampilkanHasilTeks(j.result, cipherTampil);
-  }
+  $("out-title").textContent = mode === "enc" ? "Ciphertext" : "Plaintext";
+  $("out").value = j.result;
+  $("status-line").textContent = `${mode === "enc" ? "Encoded" : "Decoded"} ${j.result.replace(/ /g, "").length} chars`;
 }
 
-async function prosesFile(mode) {
+async function prosesFile() {
   const u = $("file").files[0];
   if (!u) { $("err").textContent = "Pilih file terlebih dahulu."; return; }
-  const f = dataForm(mode);
+  const f = dataForm();
   f.append("file", u);
   const r = await fetch("/api/file", { method: "POST", body: f });
   if (!r.ok) { $("err").textContent = (await r.json()).error; return; }
   hasil.blob = await r.blob();
   hasil.nama = decodeURIComponent(r.headers.get("X-Filename"));
-  $("grid-teks").hidden = true;
-  $("grid-file").hidden = false;
-  $("results").hidden = false;
+  $("out-title").textContent = mode === "enc" ? "Ciphertext (file .dat)" : "Plaintext (file asli)";
   $("hasil-file").textContent = mode === "enc"
-    ? "Enkripsi selesai: " + hasil.nama + " (seluruh byte asli ikut terenkripsi; file tak bisa dibuka aplikasi aslinya sebelum didekripsi)."
-    : "Dekripsi selesai: " + hasil.nama + " (file asli dipulihkan dan bisa dibuka lagi).";
-  $("dl-info").textContent = "";
+    ? "Enkripsi selesai: " + hasil.nama + " — seluruh byte asli ikut terenkripsi; file tak bisa dibuka aplikasi aslinya sebelum didekripsi."
+    : "Dekripsi selesai: " + hasil.nama + " — file asli dipulihkan dan bisa dibuka lagi.";
+  tampilOutputTeks(false);
+  $("status-line").textContent = "File siap diunduh";
 }
 
-async function proses(mode) {
+async function proses() {
   $("err").textContent = "";
-  sedangProses(true);
+  $("status-line").textContent = "";
   try {
-    if (tipeInput() === "teks") await prosesTeks(mode);
-    else await prosesFile(mode);
+    if (tipeInput() === "teks") await prosesTeks();
+    else await prosesFile();
   } catch (e) {
     $("err").textContent = "Gagal memproses: " + e.message;
-  } finally {
-    sedangProses(false);
   }
 }
 
@@ -115,12 +97,16 @@ function unduh(konten, nama, tipe) {
   URL.revokeObjectURL(a.href);
 }
 
-$("btn-enc").addEventListener("click", () => proses("enc"));
-$("btn-dec").addEventListener("click", () => proses("dec"));
-$("save-plain").addEventListener("click", () => unduh(hasil.plain, "plainteks.txt"));
-$("save-cipher").addEventListener("click", () => unduh(hasil.cipher, "cipherteks.txt"));
+$("btn-enc").addEventListener("click", () => { setMode("enc"); proses(); });
+$("btn-dec").addEventListener("click", () => { setMode("dec"); proses(); });
+$("cipher").addEventListener("change", perbarui);
+document.querySelectorAll('input[name="input_type"]').forEach(r => r.addEventListener("change", perbarui));
+$("save-plain").addEventListener("click", () => unduh($("text").value, mode === "enc" ? "plainteks.txt" : "cipherteks.txt"));
+$("save-out").addEventListener("click", () => unduh($("out").value, mode === "enc" ? "cipherteks.txt" : "plainteks.txt"));
 $("unduh-file").addEventListener("click", () => { if (hasil.blob) unduh(hasil.blob, hasil.nama); });
 $("genkey").addEventListener("click", async () => {
   const r = await fetch("/api/genkey?n=50000");
   if (r.ok) unduh(await r.blob(), "otp_key.txt");
 });
+
+perbarui();

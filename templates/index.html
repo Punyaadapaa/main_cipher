@@ -10,106 +10,99 @@
 
 <header class="topbar">
   <div class="wrap">
-    <h1>Classic Ciphers</h1>
-    <p class="sub">Alat enkripsi–dekripsi cipher klasik — Shift · Substitution · Affine · Vigenere · Hill · Permutation · One-Time Pad</p>
+    <span class="logo">classic<span class="logo-accent">ciphers</span></span>
   </div>
 </header>
 
-<main class="wrap">
-  <section class="panel">
-    <form id="form" autocomplete="off">
+<main class="wrap pipeline">
 
-      <div class="frow">
-        <span class="flabel" id="lbl-tipe">Tipe input:</span>
-        <div class="fcontrol radio-row" role="radiogroup" aria-labelledby="lbl-tipe">
-          <label class="opt"><input type="radio" name="input_type" value="teks" checked><span>Teks</span></label>
-          <label class="opt"><input type="radio" name="input_type" value="file"><span>File</span></label>
-        </div>
-      </div>
-
-      <div class="frow" id="panel-teks">
-        <label class="flabel" for="text">Pesan (teks):</label>
-        <div class="fcontrol">
-          <textarea id="text" placeholder="Ketik pesan di sini — huruf non-alfabet diabaikan saat diproses"></textarea>
-        </div>
-      </div>
-
-      <div class="frow" id="panel-file" hidden>
-        <label class="flabel" for="file">File:</label>
-        <div class="fcontrol">
-          <input type="file" id="file">
-          <p class="hint">Seluruh byte file (termasuk header) ikut dienkripsi. Hasilnya file .dat yang berisi nama asli — saat dekripsi, nama &amp; ekstensi dipulihkan otomatis.</p>
-        </div>
-      </div>
-
-      <div class="frow">
-        <label class="flabel" for="cipher">Cipher:</label>
-        <div class="fcontrol">
-          <select id="cipher">
-            <option value="shift">Shift Cipher</option>
-            <option value="substitution">Substitution Cipher</option>
-            <option value="affine">Affine Cipher</option>
-            <option value="vigenere">Vigenere Cipher</option>
-            <option value="hill">Hill Cipher</option>
-            <option value="permutation">Permutation Cipher</option>
-            <option value="otp">One-Time Pad</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="frow">
-        <label class="flabel" for="key">Kunci:</label>
-        <div class="fcontrol">
-          <input id="key" spellcheck="false">
-          <p class="hint" id="hint"></p>
-          <div id="otp-key" hidden>
-            <label class="sublabel" for="keyfile">File kunci OTP (file teks berisi huruf acak):</label>
-            <input type="file" id="keyfile" accept=".txt">
-            <button type="button" class="btn ghost small" id="genkey">Bangkitkan kunci acak 50.000 huruf</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="frow" id="fmt-card">
-        <span class="flabel" id="lbl-fmt">Format cipherteks:</span>
-        <div class="fcontrol radio-row" role="radiogroup" aria-labelledby="lbl-fmt">
-          <label class="opt"><input type="radio" name="group" value="0" checked><span>Tanpa spasi</span></label>
-          <label class="opt"><input type="radio" name="group" value="5"><span>Kelompok 5 huruf</span></label>
-        </div>
-      </div>
-
-      <div class="actions">
-        <button type="button" class="btn primary" id="btn-enc">Enkripsi!</button>
-        <button type="button" class="btn danger" id="btn-dec">Dekripsi!</button>
-        <span class="err" id="err" role="alert"></span>
-      </div>
-
-    </form>
+  <!-- PANEL 1 : INPUT -->
+  <section class="block" id="block-input">
+    <div class="block-head">
+      <span class="kind">VIEW</span>
+      <span class="title" id="in-title">Plaintext</span>
+      <span class="head-right radio-row" role="radiogroup" aria-labelledby="lbl-tipe">
+        <span id="lbl-tipe" class="sr-only">Tipe input</span>
+        <label class="opt"><input type="radio" name="input_type" value="teks" checked><span>Teks</span></label>
+        <label class="opt"><input type="radio" name="input_type" value="file"><span>File</span></label>
+      </span>
+    </div>
+    <div class="block-body" id="panel-teks">
+      <textarea id="text" spellcheck="false" placeholder="Ketik pesan di sini…"></textarea>
+    </div>
+    <div class="block-body" id="panel-file" hidden>
+      <input type="file" id="file">
+      <p class="hint">Seluruh byte file (termasuk header) ikut terenkripsi. Nama asli disimpan di dalam .dat dan dipulihkan otomatis saat dekripsi.</p>
+    </div>
+    <div class="block-foot">
+      <button type="button" class="btn ghost small" id="save-plain">Simpan plaintext…</button>
+    </div>
   </section>
 
-  <section class="panel results" id="results" hidden aria-live="polite">
-    <div class="grid-2" id="grid-teks">
-      <div>
-        <div class="out-head">
-          <label for="out-plain">Plaintext</label>
-          <button type="button" class="btn ghost small" id="save-plain">Simpan…</button>
-        </div>
-        <textarea id="out-plain" readonly></textarea>
+  <div class="conn" aria-hidden="true"><span class="chev"></span><span class="plus">+</span></div>
+
+  <!-- PANEL 2 : CIPHER -->
+  <section class="block" id="block-cipher">
+    <div class="block-head">
+      <span class="op-group">
+        <button type="button" class="op active" id="btn-enc">ENCODE</button>
+        <button type="button" class="op" id="btn-dec">DECODE</button>
+      </span>
+    </div>
+    <div class="block-title">
+      <select id="cipher" aria-label="Pilih cipher">
+        <option value="shift">Shift cipher</option>
+        <option value="substitution">Substitution cipher</option>
+        <option value="affine">Affine cipher</option>
+        <option value="vigenere">Vigenere cipher</option>
+        <option value="hill">Hill cipher</option>
+        <option value="permutation">Permutation cipher</option>
+        <option value="otp">One-time pad</option>
+      </select>
+    </div>
+    <div class="block-body settings">
+      <div class="setting">
+        <span class="setting-label">KUNCI</span>
+        <input id="key" spellcheck="false">
+        <p class="hint" id="hint"></p>
       </div>
-      <div>
-        <div class="out-head">
-          <label for="out-cipher">Ciphertext</label>
-          <button type="button" class="btn ghost small" id="save-cipher">Simpan…</button>
-        </div>
-        <textarea id="out-cipher" readonly></textarea>
+      <div class="setting" id="otp-key" hidden>
+        <span class="setting-label">FILE KUNCI OTP (HURUF ACAK)</span>
+        <input type="file" id="keyfile" accept=".txt">
+        <button type="button" class="btn ghost small" id="genkey">Bangkitkan 50.000 huruf acak</button>
       </div>
     </div>
-    <div id="grid-file" hidden>
+    <div class="block-foot">
+      <span class="err" id="err" role="alert"></span>
+      <span class="status" id="status-line"></span>
+    </div>
+  </section>
+
+  <div class="conn" aria-hidden="true"><span class="chev"></span><span class="plus">+</span></div>
+
+  <!-- PANEL 3 : OUTPUT -->
+  <section class="block" id="block-output">
+    <div class="block-head">
+      <span class="kind">VIEW</span>
+      <span class="title" id="out-title">Ciphertext</span>
+      <span class="head-right radio-row" role="radiogroup" aria-labelledby="lbl-fmt">
+        <span id="lbl-fmt" class="sr-only">Format cipherteks</span>
+        <label class="opt"><input type="radio" name="group" value="0" checked><span>Rapat</span></label>
+        <label class="opt"><input type="radio" name="group" value="5"><span>Kelompok 5</span></label>
+      </span>
+    </div>
+    <div class="block-body" id="out-area">
+      <textarea id="out" readonly spellcheck="false"></textarea>
+    </div>
+    <div class="block-body" id="file-result" hidden>
       <p class="hasil-file" id="hasil-file"></p>
       <button type="button" class="btn primary" id="unduh-file">Unduh file</button>
     </div>
-    <p class="hint" id="dl-info"></p>
+    <div class="block-foot">
+      <button type="button" class="btn ghost small" id="save-out">Simpan ciphertext…</button>
+    </div>
   </section>
+
 </main>
 
 <script src="{{ url_for('static', filename='app.js') }}"></script>

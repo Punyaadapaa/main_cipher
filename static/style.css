@@ -1,6 +1,7 @@
 /* Classic Ciphers — tata letak form baris (label kiri : kontrol kanan) ala alat web klasik.
    Flat, aksen hijau/merah untuk aksi, terang/gelap otomatis. Skala jarak: 4/8/12/16/20/24 px. */
 :root{
+  color-scheme:light;
   --bg:#f6f7f9; --surface:#ffffff; --text:#1c2430; --muted:#5c6675;
   --border:#dfe3ea; --radius:6px;
   --green:#2e9e44; --green-ink:#ffffff;
@@ -9,6 +10,7 @@
   --danger:#c0392b;
 }
 :root[data-theme="dark"]{
+  color-scheme:dark;
   --bg:#12151b; --surface:#1b202a; --text:#e8ebf1; --muted:#98a2b3;
   --border:#2c3441;
   --green:#2f9e4d; --red:#e05a4e;
@@ -17,6 +19,7 @@
 }
 @media(prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
+    color-scheme:dark;
     --bg:#12151b; --surface:#1b202a; --text:#e8ebf1; --muted:#98a2b3;
     --border:#2c3441;
     --green:#2f9e4d; --red:#e05a4e;
@@ -25,13 +28,14 @@
   }
 }
 *{box-sizing:border-box}
+[hidden]{display:none !important}
 body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
 
 .wrap{max-width:880px;margin:0 auto;padding:0 20px}
 .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:18px 0 16px;margin-bottom:24px}
 .topbar h1{margin:0;font-size:22px;letter-spacing:.2px}
 .topbar .sub{margin:4px 0 0;font-size:13px;color:var(--muted)}
-.topbar-inner{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.topbar-inner{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
 
 /* tombol tema terang/gelap */
 .theme-toggle{display:inline-flex;align-items:center;gap:8px;flex-shrink:0;padding:8px 14px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font:700 13px system-ui,sans-serif}

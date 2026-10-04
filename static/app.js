@@ -104,6 +104,7 @@ async function prosesFile(mode) {
   if (!r.ok) { $("err").textContent = (await r.json()).error; return; }
   hasil.blob = await r.blob();
   hasil.nama = decodeURIComponent(r.headers.get("X-Filename"));
+  hasil.plain = ""; hasil.cipher = "";  // bersihkan hasil teks lama agar tombol Simpan tak menyimpan data basi
   $("grid-teks").hidden = true;
   $("grid-file").hidden = false;
   $("results").hidden = false;
@@ -137,8 +138,8 @@ function unduh(konten, nama, tipe) {
 
 $("btn-enc").addEventListener("click", () => proses("enc"));
 $("btn-dec").addEventListener("click", () => proses("dec"));
-$("save-plain").addEventListener("click", () => unduh(hasil.plain, "plainteks.txt"));
-$("save-cipher").addEventListener("click", () => unduh(hasil.cipher, "cipherteks.txt"));
+$("save-plain").addEventListener("click", () => { if (hasil.plain) unduh(hasil.plain, "plainteks.txt"); else $("err").textContent = "Belum ada plaintext untuk disimpan — jalankan Enkripsi/Dekripsi dulu."; });
+$("save-cipher").addEventListener("click", () => { if (hasil.cipher) unduh(hasil.cipher, "cipherteks.txt"); else $("err").textContent = "Belum ada cipherteks untuk disimpan — jalankan Enkripsi/Dekripsi dulu."; });
 $("unduh-file").addEventListener("click", () => { if (hasil.blob) unduh(hasil.blob, hasil.nama); });
 $("genkey").addEventListener("click", async () => {
   const r = await fetch("/api/genkey?n=50000");

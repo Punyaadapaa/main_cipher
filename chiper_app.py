@@ -1,6 +1,6 @@
 """
 Aplikasi Kriptografi Klasik (GUI Web, Flask)
-Jalankan:  pip install flask  &&  python cipher_app.py   ->  buka http://127.0.0.1:5000
+Jalankan:  pip install flask  &&  python chiper_app.py   ->  buka http://127.0.0.1:5000
 
 Mode TEKS : alfabet 26 huruf (A-Z). Karakter non-huruf dibuang.
 Mode FILE : semua byte (termasuk header) diproses dengan versi mod 256 dari cipher yang sama.
@@ -28,9 +28,17 @@ def keyerr(e):
 @app.post("/api/text")
 def api_text():
     f = request.form
-    enc = f["mode"] == "enc"
-    data = [ord(c) - 65 for c in f.get("text", "").upper() if "A" <= c <= "Z"]
-    out = "".join(chr(65 + v) for v in run(f["cipher"], data, f.get("key", ""), enc, 26, keyfile()))
+    mode = f.get("mode")
+    cipher = f.get("cipher")
+    if mode not in ("enc", "dec"):
+        raise KeyErr("Mode tidak valid (enc/dec).")
+    if not cipher:
+        raise KeyErr("Pilih cipher terlebih dahulu.")
+    enc = mode == "enc"
+    huruf = [ord(c) - 65 for c in f.get("text", "").upper() if "A" <= c <= "Z"]
+    if not huruf:
+        raise KeyErr("Pesan tidak berisi huruf alfabet (A-Z).")
+    out = "".join(chr(65 + v) for v in run(cipher, huruf, f.get("key", ""), enc, 26, keyfile()))
     if enc and f.get("group") == "5":
         out = " ".join(out[i:i + 5] for i in range(0, len(out), 5))
     return jsonify(result=out)
@@ -39,14 +47,20 @@ def api_text():
 @app.post("/api/file")
 def api_file():
     f = request.form
-    enc = f["mode"] == "enc"
+    mode = f.get("mode")
+    cipher = f.get("cipher")
+    if mode not in ("enc", "dec"):
+        raise KeyErr("Mode tidak valid (enc/dec).")
+    if not cipher:
+        raise KeyErr("Pilih cipher terlebih dahulu.")
+    enc = mode == "enc"
     up = request.files.get("file")
     if not up:
         raise KeyErr("Pilih file terlebih dahulu.")
     raw = up.read()
     if enc:
         name = up.filename.encode()
-        body = bytes(run(f["cipher"], list(raw), f.get("key", ""), True, 256, keyfile()))
+        body = bytes(run(cipher, list(raw), f.get("key", ""), True, 256, keyfile()))
         blob = MAGIC + struct.pack(">H", len(name)) + name + struct.pack(">Q", len(raw)) + body
         fn = up.filename + ".dat"
     else:
@@ -56,7 +70,7 @@ def api_file():
         fn = raw[6:6 + nl].decode()
         olen = struct.unpack(">Q", raw[6 + nl:14 + nl])[0]
         body = list(raw[14 + nl:])
-        blob = bytes(run(f["cipher"], body, f.get("key", ""), False, 256, keyfile()))[:olen]
+        blob = bytes(run(cipher, body, f.get("key", ""), False, 256, keyfile()))[:olen]
     r = send_file(io.BytesIO(blob), as_attachment=True, download_name=fn)
     r.headers["X-Filename"] = quote(fn)
     r.headers["Access-Control-Expose-Headers"] = "X-Filename"
@@ -65,7 +79,13 @@ def api_file():
 
 @app.get("/api/genkey")
 def genkey():
-    n = min(max(int(request.args.get("n", 50000)), 1), 5_000_000)
+    try:
+        n = int(request.args.get("n", 50000))
+    except ValueError:
+        raise KeyErr("Jumlah huruf kunci harus berupa angka.")
+    if n < 1:
+        raise KeyErr("Jumlah huruf kunci minimal 1.")
+    n = min(n, 5_000_000)
     txt = "".join(secrets.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ") for _ in range(n))
     return send_file(io.BytesIO(txt.encode()), as_attachment=True, download_name="otp_key.txt")
 
@@ -110,7 +130,7 @@ label.i{display:inline;font-weight:400;margin-right:14px}label.i input{width:aut
 const $=id=>document.getElementById(id);
 const H={shift:"Satu angka, mis. 3",substitution:"26 huruf berbeda (permutasi alfabet), mis. QWERTYUIOPASDFGHJKLZXCVBNM",
 affine:"Dua angka 'a b'; a relatif prima dengan 26 (file: 256), mis. 7 3",vigenere:"Kata kunci bebas panjang, mis. LEMON",
-hill:"Matriks n×n baris demi baris, mis. 3 3 2 5 (2×2). Harus punya balikan mod 26 (file: mod 256)",
+hill:"Matriks n×n baris demi baris, mis. 3 3 2 5 (2×2). Determinan harus koprima mod 26 (teks) / ganjil (file, mod 256)",
 permutation:"Permutasi 1..m, mis. 3 1 2 (blok m huruf)",otp:"Unggah file kunci. Jika kosong, isi kolom kunci ini dengan huruf kunci."};
 function upd(){$("hint").textContent=H[$("cipher").value];$("kf").style.display=$("cipher").value=="otp"?"block":"none"}
 $("cipher").onchange=upd;upd();

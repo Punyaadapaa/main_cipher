@@ -125,3 +125,13 @@ def test_halaman_memuat_aset(klien):
     html = klien.get("/").data
     assert b"static/style.css" in html
     assert b"static/app.js" in html
+
+
+def test_halaman_punya_radio_tipe_input_dan_hasil_berlabel(klien):
+    """Redesign: radio Tipe input (Teks/File) + hasil berlabel Plaintext/Ciphertext."""
+    html = klien.get("/").data
+    assert b'name="input_type"' in html
+    assert b"Plaintext" in html
+    assert b"Ciphertext" in html
+    assert b"btn-enc" in html
+    assert b"btn-dec" in html

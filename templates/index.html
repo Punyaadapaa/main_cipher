@@ -3,96 +3,103 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Classic Ciphers — Kriptografi Klasik</title>
+<title>Classic Ciphers — Alat Cipher Klasik Online</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
 <header class="topbar">
   <div class="wrap">
-    <p class="brand">Classic Ciphers</p>
-    <p class="sub">Shift · Substitution · Affine · Vigenere · Hill · Permutation · One-Time Pad</p>
+    <h1>Classic Ciphers</h1>
+    <p class="sub">Alat enkripsi–dekripsi cipher klasik — Shift · Substitution · Affine · Vigenere · Hill · Permutation · One-Time Pad</p>
   </div>
 </header>
 
 <main class="wrap">
-  <section class="card">
-    <fieldset>
-      <legend>Tipe input</legend>
-      <div class="radio-row">
-        <label class="opt"><input type="radio" name="input_type" value="teks" checked><span>Teks</span></label>
-        <label class="opt"><input type="radio" name="input_type" value="file"><span>File</span></label>
+  <section class="panel">
+    <form id="form" autocomplete="off">
+
+      <div class="frow">
+        <span class="flabel" id="lbl-tipe">Tipe input:</span>
+        <div class="fcontrol radio-row" role="radiogroup" aria-labelledby="lbl-tipe">
+          <label class="opt"><input type="radio" name="input_type" value="teks" checked><span>Teks</span></label>
+          <label class="opt"><input type="radio" name="input_type" value="file"><span>File</span></label>
+        </div>
       </div>
-    </fieldset>
 
-    <div id="panel-teks">
-      <label for="text">Pesan</label>
-      <textarea id="text" placeholder="Ketik pesan di sini — huruf non-alfabet diabaikan saat diproses"></textarea>
-    </div>
+      <div class="frow" id="panel-teks">
+        <label class="flabel" for="text">Pesan (teks):</label>
+        <div class="fcontrol">
+          <textarea id="text" placeholder="Ketik pesan di sini — huruf non-alfabet diabaikan saat diproses"></textarea>
+        </div>
+      </div>
 
-    <div id="panel-file" hidden>
-      <label for="file">File (teks atau biner, ekstensi apa saja)</label>
-      <input type="file" id="file">
-      <p class="hint">Seluruh byte file (termasuk header) ikut dienkripsi. Hasilnya file .dat yang berisi nama asli — saat dekripsi, nama &amp; ekstensi dipulihkan otomatis.</p>
-    </div>
+      <div class="frow" id="panel-file" hidden>
+        <label class="flabel" for="file">File:</label>
+        <div class="fcontrol">
+          <input type="file" id="file">
+          <p class="hint">Seluruh byte file (termasuk header) ikut dienkripsi. Hasilnya file .dat yang berisi nama asli — saat dekripsi, nama &amp; ekstensi dipulihkan otomatis.</p>
+        </div>
+      </div>
+
+      <div class="frow">
+        <label class="flabel" for="cipher">Cipher:</label>
+        <div class="fcontrol">
+          <select id="cipher">
+            <option value="shift">Shift Cipher</option>
+            <option value="substitution">Substitution Cipher</option>
+            <option value="affine">Affine Cipher</option>
+            <option value="vigenere">Vigenere Cipher</option>
+            <option value="hill">Hill Cipher</option>
+            <option value="permutation">Permutation Cipher</option>
+            <option value="otp">One-Time Pad</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="frow">
+        <label class="flabel" for="key">Kunci:</label>
+        <div class="fcontrol">
+          <input id="key" spellcheck="false">
+          <p class="hint" id="hint"></p>
+          <div id="otp-key" hidden>
+            <label class="sublabel" for="keyfile">File kunci OTP (file teks berisi huruf acak):</label>
+            <input type="file" id="keyfile" accept=".txt">
+            <button type="button" class="btn ghost small" id="genkey">Bangkitkan kunci acak 50.000 huruf</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="frow" id="fmt-card">
+        <span class="flabel" id="lbl-fmt">Format cipherteks:</span>
+        <div class="fcontrol radio-row" role="radiogroup" aria-labelledby="lbl-fmt">
+          <label class="opt"><input type="radio" name="group" value="0" checked><span>Tanpa spasi</span></label>
+          <label class="opt"><input type="radio" name="group" value="5"><span>Kelompok 5 huruf</span></label>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn primary" id="btn-enc">Enkripsi!</button>
+        <button type="button" class="btn danger" id="btn-dec">Dekripsi!</button>
+        <span class="err" id="err" role="alert"></span>
+      </div>
+
+    </form>
   </section>
 
-  <section class="card">
-    <div class="row">
-      <div class="grow">
-        <label for="cipher">Cipher</label>
-        <select id="cipher">
-          <option value="shift">Shift Cipher</option>
-          <option value="substitution">Substitution Cipher</option>
-          <option value="affine">Affine Cipher</option>
-          <option value="vigenere">Vigenere Cipher</option>
-          <option value="hill">Hill Cipher</option>
-          <option value="permutation">Permutation Cipher</option>
-          <option value="otp">One-Time Pad</option>
-        </select>
-      </div>
-    </div>
-
-    <div id="otp-key" hidden>
-      <label for="keyfile">File kunci OTP (file teks berisi huruf acak)</label>
-      <input type="file" id="keyfile" accept=".txt">
-      <button type="button" class="btn ghost" id="genkey">Bangkitkan kunci acak 50.000 huruf</button>
-    </div>
-
-    <label for="key">Kunci</label>
-    <input id="key" autocomplete="off" spellcheck="false">
-    <p class="hint" id="hint"></p>
-  </section>
-
-  <section class="card" id="fmt-card">
-    <fieldset>
-      <legend>Format cipherteks</legend>
-      <div class="radio-row">
-        <label class="opt"><input type="radio" name="group" value="0" checked><span>Tanpa spasi</span></label>
-        <label class="opt"><input type="radio" name="group" value="5"><span>Kelompok 5 huruf</span></label>
-      </div>
-    </fieldset>
-  </section>
-
-  <div class="actions">
-    <button type="button" class="btn primary" id="btn-enc">Enkripsi</button>
-    <button type="button" class="btn ghost" id="btn-dec">Dekripsi</button>
-    <span class="err" id="err" role="alert"></span>
-  </div>
-
-  <section class="card results" id="results" hidden aria-live="polite">
+  <section class="panel results" id="results" hidden aria-live="polite">
     <div class="grid-2" id="grid-teks">
       <div>
         <div class="out-head">
           <label for="out-plain">Plaintext</label>
-          <button type="button" class="btn ghost small" id="save-plain">Simpan</button>
+          <button type="button" class="btn ghost small" id="save-plain">Simpan…</button>
         </div>
         <textarea id="out-plain" readonly></textarea>
       </div>
       <div>
         <div class="out-head">
           <label for="out-cipher">Ciphertext</label>
-          <button type="button" class="btn ghost small" id="save-cipher">Simpan</button>
+          <button type="button" class="btn ghost small" id="save-cipher">Simpan…</button>
         </div>
         <textarea id="out-cipher" readonly></textarea>
       </div>

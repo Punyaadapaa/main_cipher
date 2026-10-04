@@ -45,8 +45,8 @@ function dataForm(mode) {
 function sedangProses(status) {
   $("btn-enc").disabled = status;
   $("btn-dec").disabled = status;
-  $("btn-enc").textContent = status ? "Memproses…" : "Enkripsi";
-  $("btn-dec").textContent = status ? "Memproses…" : "Dekripsi";
+  $("btn-enc").textContent = status ? "Memproses…" : "Enkripsi!";
+  $("btn-dec").textContent = status ? "Memproses…" : "Dekripsi!";
 }
 
 function tampilkanHasilTeks(plain, cipher) {

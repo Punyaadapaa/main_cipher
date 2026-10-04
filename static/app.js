@@ -1,6 +1,21 @@
 // Logika antarmuka Classic Ciphers (pipeline Plaintext → Cipher → Ciphertext).
 "use strict";
 const $ = id => document.getElementById(id);
+(function initTheme(){
+  const btn = document.getElementById("theme-toggle");
+  if(!btn) return;
+  const lbl = document.getElementById("ti-label");
+  const apply = t => {
+    document.documentElement.setAttribute("data-theme", t);
+    if (lbl) lbl.textContent = (t === "dark") ? "Terang" : "Gelap";
+    try{ localStorage.setItem("cc-theme", t); }catch(e){}
+  };
+  apply(document.documentElement.getAttribute("data-theme") || "light");
+  btn.addEventListener("click", ()=>{
+    const cur = document.documentElement.getAttribute("data-theme") || "light";
+    apply(cur === "dark" ? "light" : "dark");
+  });
+})();
 
 const HINT = {
   shift: "Satu angka, mis. 3",
@@ -22,15 +37,40 @@ function setMode(m) {
   mode = m;
   $("btn-enc").classList.toggle("active", m === "enc");
   $("btn-dec").classList.toggle("active", m === "dec");
+  $("btn-enc").setAttribute("aria-selected", m === "enc");
+  $("btn-dec").setAttribute("aria-selected", m === "dec");
 }
 
 function perbarui() {
-  $("hint").textContent = HINT[$("cipher").value];
-  $("otp-key").hidden = $("cipher").value !== "otp";
+  const c = $("cipher").value;
+  $("hint").textContent = HINT[c];
+  $("otp-key").hidden = c !== "otp";
+  // stepper SHIFT khusus cipher shift; kunci teks disembunyikan saat stepper aktif
+  const isShift = c === "shift";
+  $("shift-box").hidden = !isShift;
+  $("key-group").hidden = isShift;
+  if (isShift) sinkronShift();
   const teks = tipeInput() === "teks";
   $("panel-teks").hidden = !teks;
   $("panel-file").hidden = teks;
   tampilOutputTeks(teks);
+}
+
+/* ---- stepper SHIFT (ala cryptii: − 7 a→h +) ---- */
+function shiftNilai() {
+  const n = parseInt($("key").value, 10);
+  return Number.isFinite(n) ? ((n % 26) + 26) % 26 : 0;
+}
+function sinkronShift() {
+  const n = shiftNilai();
+  $("shift-num").textContent = n;
+  $("shift-map").textContent = String.fromCharCode(97 + n);
+}
+function ubahShift(d) {
+  const n = ((shiftNilai() + d) % 26 + 26) % 26;
+  $("key").value = String(n);
+  sinkronShift();
+  proses();
 }
 
 function tampilOutputTeks(teks) {
@@ -100,6 +140,9 @@ function unduh(konten, nama, tipe) {
 $("btn-enc").addEventListener("click", () => { setMode("enc"); proses(); });
 $("btn-dec").addEventListener("click", () => { setMode("dec"); proses(); });
 $("cipher").addEventListener("change", perbarui);
+$("shift-dec").addEventListener("click", () => ubahShift(-1));
+$("shift-inc").addEventListener("click", () => ubahShift(1));
+$("key").addEventListener("input", () => { if ($("cipher").value === "shift") sinkronShift(); });
 document.querySelectorAll('input[name="input_type"]').forEach(r => r.addEventListener("change", perbarui));
 $("save-plain").addEventListener("click", () => unduh($("text").value, mode === "enc" ? "plainteks.txt" : "cipherteks.txt"));
 $("save-out").addEventListener("click", () => unduh($("out").value, mode === "enc" ? "cipherteks.txt" : "plainteks.txt"));

@@ -5,22 +5,32 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Classic Ciphers — Alat Cipher Klasik Online</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script>(function(){try{var t=localStorage.getItem('cc-theme');if(!t){t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)}catch(e){}})()</script>
 </head>
 <body>
 
 <header class="topbar">
-  <div class="wrap">
-    <span class="logo">classic<span class="logo-accent">ciphers</span></span>
+  <div class="wrap topbar-inner">
+    <a class="logo" href="#" aria-label="Classic Ciphers">
+      <svg viewBox="0 0 28 28" width="28" height="28" aria-hidden="true"><rect x="2" y="2" width="8" height="8" rx="1.5" fill="#0ea5bf"/><rect x="14" y="3" width="9" height="9" rx="1.5" fill="#009bb8"/><circle cx="6" cy="22" r="4" fill="#0ea5bf"/><rect x="14" y="16" width="7" height="7" rx="1.5" fill="#0ea5bf"/><path d="M4 12 l2 2 l2 -2 M4 16 l2 -2 l2 2" stroke="#0ea5bf" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>
+      <span>classic<span class="logo-accent">ciphers</span></span>
+    </a>
+    <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Ganti tema">
+      <span class="ti ti-sun" aria-hidden="true">☀</span>
+      <span class="ti ti-moon" aria-hidden="true">☾</span>
+      <span class="ti-label" id="ti-label">Gelap</span>
+    </button>
   </div>
 </header>
 
 <main class="wrap pipeline">
+  <div class="conn conn-cap start" aria-hidden="true"><span class="chev"></span><span class="plus">+</span></div>
 
   <!-- PANEL 1 : INPUT -->
   <section class="block" id="block-input">
     <div class="block-head">
       <span class="kind">VIEW</span>
-      <span class="title" id="in-title">Plaintext</span>
+      <span class="title">Plaintext</span>
       <span class="head-right radio-row" role="radiogroup" aria-labelledby="lbl-tipe">
         <span id="lbl-tipe" class="sr-only">Tipe input</span>
         <label class="opt"><input type="radio" name="input_type" value="teks" checked><span>Teks</span></label>
@@ -28,7 +38,7 @@
       </span>
     </div>
     <div class="block-body" id="panel-teks">
-      <textarea id="text" spellcheck="false" placeholder="Ketik pesan di sini…"></textarea>
+      <textarea id="text" spellcheck="false" placeholder="hanief mendo"></textarea>
     </div>
     <div class="block-body" id="panel-file" hidden>
       <input type="file" id="file">
@@ -44,10 +54,11 @@
   <!-- PANEL 2 : CIPHER -->
   <section class="block" id="block-cipher">
     <div class="block-head">
-      <span class="op-group">
-        <button type="button" class="op active" id="btn-enc">ENCODE</button>
-        <button type="button" class="op" id="btn-dec">DECODE</button>
+      <span class="op-group" role="tablist">
+        <button type="button" class="op active" id="btn-enc" role="tab" aria-selected="true">ENCODE</button>
+        <button type="button" class="op" id="btn-dec" role="tab" aria-selected="false">DECODE</button>
       </span>
+      <span class="head-right" style="color:var(--muted);font-size:16px">⋮</span>
     </div>
     <div class="block-title">
       <select id="cipher" aria-label="Pilih cipher">
@@ -61,15 +72,34 @@
       </select>
     </div>
     <div class="block-body settings">
-      <div class="setting">
+      <!-- khusus shift: stepper ala cryptii -->
+      <div class="setting" id="shift-box" hidden>
+        <span class="setting-label">SHIFT</span>
+        <div class="shift-ctrl">
+          <button type="button" class="icon-btn" id="shift-dec" aria-label="Kurangi">−</button>
+          <span class="shift-val"><b id="shift-num">7</b> <span class="muted">a→<span id="shift-map">h</span></span></span>
+          <button type="button" class="icon-btn" id="shift-inc" aria-label="Tambah">+</button>
+        </div>
+      </div>
+      <div class="setting" id="key-group">
         <span class="setting-label">KUNCI</span>
-        <input id="key" spellcheck="false">
+        <input id="key" spellcheck="false" value="7" placeholder="mis. 3 / LEMON / 3 3 2 5">
         <p class="hint" id="hint"></p>
       </div>
       <div class="setting" id="otp-key" hidden>
         <span class="setting-label">FILE KUNCI OTP (HURUF ACAK)</span>
         <input type="file" id="keyfile" accept=".txt">
         <button type="button" class="btn ghost small" id="genkey">Bangkitkan 50.000 huruf acak</button>
+      </div>
+      <div class="setting meta-row" aria-hidden="true">
+        <div class="meta-col">
+          <span class="setting-label">ALPHABET</span>
+          <span class="mono-sm">abcdefghijklmnopqrstuvwxyz</span>
+        </div>
+      </div>
+      <div class="setting meta-row two" aria-hidden="true">
+        <div class="meta-col"><span class="setting-label">CASE STRATEGY</span><span class="mono-sm">Maintain case</span></div>
+        <div class="meta-col"><span class="setting-label">FOREIGN CHARS</span><span class="mono-sm">Include</span></div>
       </div>
     </div>
     <div class="block-foot">
@@ -92,7 +122,7 @@
       </span>
     </div>
     <div class="block-body" id="out-area">
-      <textarea id="out" readonly spellcheck="false"></textarea>
+      <textarea id="out" readonly spellcheck="false" placeholder="ohu…"></textarea>
     </div>
     <div class="block-body" id="file-result" hidden>
       <p class="hasil-file" id="hasil-file"></p>
@@ -103,6 +133,7 @@
     </div>
   </section>
 
+  <div class="conn conn-cap end" aria-hidden="true"><span class="chev"></span><span class="plus">+</span></div>
 </main>
 
 <script src="{{ url_for('static', filename='app.js') }}"></script>

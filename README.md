@@ -1,4 +1,4 @@
-# Classic Ciphers — Aplikasi Kriptografi Klasik Online (GUI Web)
+# >_ MainCipher — Aplikasi Kriptografi Klasik Online (GUI Web)
 
 Aplikasi web untuk enkripsi dan dekripsi menggunakan 8 cipher klasik. Memenuhi spesifikasi tugas mata kuliah Kriptografi.
 

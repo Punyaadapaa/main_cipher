@@ -1,4 +1,4 @@
-/* Classic Ciphers — minimal modern, desktop-first, no AI slop */
+/* >_ MainCipher — minimal modern, desktop-first, no AI slop */
 :root{
   color-scheme:light;
   --bg:#f8f9fb; --surface:#ffffff; --text:#0f172a; --muted:#64748b;
@@ -41,7 +41,8 @@ body{margin:0;background:var(--bg);color:var(--text);font:14.5px/1.6 "Inter",sys
 
 /* topbar — editorial, flat */
 .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:22px 0 20px;margin-bottom:28px}
-.topbar h1{margin:0;font-size:22px;font-weight:750;letter-spacing:-.03em;line-height:1.1}
+.topbar h1{margin:0;font-size:22px;font-weight:750;letter-spacing:-.03em;line-height:1.1;display:flex;align-items:center;gap:8px}
+.prompt{color:var(--muted);font-weight:700;letter-spacing:-.02em}
 .topbar .sub{margin:6px 0 0;font-size:12.5px;color:var(--muted);letter-spacing:-.01em;max-width:640px}
 .topbar-inner{display:flex;justify-content:space-between;align-items:center;gap:20px}
 @media(max-width:640px){.topbar{padding:16px 0 14px;margin-bottom:18px}.topbar h1{font-size:19px}}

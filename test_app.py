@@ -21,7 +21,7 @@ def klien():
 def test_halaman_utama(klien):
     r = klien.get("/")
     assert r.status_code == 200
-    assert b"Classic Ciphers" in r.data
+    assert b"MainCipher" in r.data
 
 
 def test_enkripsi_shift_via_api(klien):

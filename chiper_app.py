@@ -13,6 +13,7 @@ from flask import Flask, render_template, request, jsonify, send_file
 from ciphers import KeyErr, run
 
 app = Flask(__name__)
+app.config["TEMPLATES_AUTO_RELOAD"] = True  # template selalu dibaca ulang (dev)
 MAGIC = b"PYCF"
 
 

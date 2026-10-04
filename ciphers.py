@@ -187,6 +187,65 @@ def otp(data, key, enc, mod, keybytes=None):
     return [(x + tanda * kk[i]) % mod for i, x in enumerate(data)]
 
 
+def playfair(data, key, enc, mod, keybytes=None):
+    """Playfair Cipher 5x5: pasangan huruf (digraph), I dan J digabung.
+    Hanya mendukung mode teks (alfabet 26 huruf)."""
+    if mod != 26:
+        raise KeyErr("Playfair hanya mendukung mode teks (alfabet), bukan file biner.")
+    kata = [c for c in key.upper() if "A" <= c <= "Z"]
+    if not kata:
+        raise KeyErr("Playfair: kunci harus berupa kata kunci alfabet (mis. MONARCHY).")
+    
+    mat_list = []
+    for c in kata:
+        c = "I" if c == "J" else c
+        if c not in mat_list:
+            mat_list.append(c)
+    for c in "ABCDEFGHIKLMNOPQRSTUVWXYZ":
+        if c not in mat_list:
+            mat_list.append(c)
+            
+    mat = [mat_list[i * 5:(i + 1) * 5] for i in range(5)]
+    pos = {mat[r][c]: (r, c) for r in range(5) for c in range(5)}
+    
+    huruf = ["I" if chr(65 + v) == "J" else chr(65 + v) for v in data]
+    tanda = 1 if enc else -1
+    
+    def proses_pasang(a, b):
+        r1, c1 = pos[a]
+        r2, c2 = pos[b]
+        if r1 == r2:
+            return [mat[r1][(c1 + tanda) % 5], mat[r2][(c2 + tanda) % 5]]
+        if c1 == c2:
+            return [mat[(r1 + tanda) % 5][c1], mat[(r2 + tanda) % 5][c2]]
+        return [mat[r1][c2], mat[r2][c1]]
+    
+    out = []
+    if enc:
+        i = 0
+        while i < len(huruf):
+            a = huruf[i]
+            if i + 1 < len(huruf):
+                b = huruf[i + 1]
+                if a == b:
+                    pasang = (a, "X")
+                    i += 1
+                else:
+                    pasang = (a, b)
+                    i += 2
+            else:
+                pasang = (a, "X")
+                i += 1
+            out += proses_pasang(pasang[0], pasang[1])
+    else:
+        if len(huruf) % 2 != 0:
+            raise KeyErr("Playfair: panjang cipherteks harus genap untuk didekripsi.")
+        for i in range(0, len(huruf), 2):
+            out += proses_pasang(huruf[i], huruf[i + 1])
+            
+    return [ord(c) - 65 for c in out]
+
+
 CIPHERS = {
     "shift": shift,
     "substitution": substitution,
@@ -195,6 +254,7 @@ CIPHERS = {
     "hill": hill,
     "permutation": permutation,
     "otp": otp,
+    "playfair": playfair,
 }
 
 

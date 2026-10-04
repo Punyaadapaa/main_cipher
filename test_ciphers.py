@@ -75,6 +75,27 @@ def test_otp_vektor_klasik():
     assert S(run("otp", out, "", False, 26, keybytes=b"XMCKL")) == "HELLO"
 
 
+def test_playfair_vektor_klasik():
+    # Key: MONARCHY, teks: INSTRUMENT (panjang genap, tanpa huruf dobel)
+    out = run("playfair", A("INSTRUMENT"), "MONARCHY", True, 26)
+    assert S(run("playfair", out, "MONARCHY", False, 26)) == "INSTRUMENT"
+
+
+def test_playfair_huruf_j_menjadi_i():
+    # Huruf J dipetakan ke I
+    out = run("playfair", A("JUMP"), "KEYWORD", True, 26)
+    assert S(run("playfair", out, "KEYWORD", False, 26)) == "IUMP"
+
+
+def test_playfair_huruf_dobel_dan_ganjil():
+    # "BALLOON" (7 huruf, ada LL dan OO) -> enkripsi menyisipkan X
+    out = run("playfair", A("BALLOON"), "MONARCHY", True, 26)
+    assert len(out) % 2 == 0
+    # Dekripsi mengembalikan teks dengan X yang disisipkan
+    dec = S(run("playfair", out, "MONARCHY", False, 26))
+    assert "BA" in dec and "ON" in dec
+
+
 # ---------- round-trip properti (mode teks) ----------
 
 KUNCI_TEKS = {
@@ -154,6 +175,7 @@ KUNCI_BURUK = [
     ("permutation", "0 1"),
     ("vigenere", "123"),
     ("otp", "A"),
+    ("playfair", "123"),
 ]
 
 
@@ -163,6 +185,11 @@ def test_kunci_tidak_valid(nama, kunci):
         run(nama, A("TEST"), kunci, True, 26)
 
 
+def test_playfair_tolak_mode_file():
+    with pytest.raises(KeyErr):
+        run("playfair", [1, 2, 3], "MONARCHY", True, 256)
+
+
 def test_cipher_tidak_dikenal():
     with pytest.raises(KeyErr):
-        run("playfair", A("TEST"), "x", True, 26)
+        run("cipher_palsu", A("TEST"), "x", True, 26)

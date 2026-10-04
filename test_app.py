@@ -70,6 +70,24 @@ def test_otp_via_file_kunci(klien):
     assert dec.get_json()["result"] == "SERANGFAJAR"
 
 
+def test_playfair_via_api(klien):
+    enc = klien.post("/api/text", data={
+        "cipher": "playfair", "mode": "enc", "key": "MONARCHY", "text": "INSTRUMENT", "group": "0"})
+    assert enc.status_code == 200
+    dec = klien.post("/api/text", data={
+        "cipher": "playfair", "mode": "dec", "key": "MONARCHY", "text": enc.get_json()["result"], "group": "0"})
+    assert dec.get_json()["result"] == "INSTRUMENT"
+
+
+def test_playfair_mode_file_ditolak(klien):
+    r = klien.post("/api/file", data={
+        "cipher": "playfair", "mode": "enc", "key": "MONARCHY",
+        "file": (BytesIO(b"ABC"), "test.txt")}, content_type="multipart/form-data")
+    assert r.status_code == 400
+    assert r.is_json
+    assert "Playfair" in r.get_json()["error"]
+
+
 def test_kunci_buruk_menghasilkan_json_400(klien):
     r = klien.post("/api/text", data={
         "cipher": "shift", "mode": "enc", "key": "3 4", "text": "HELLO", "group": "0"})
@@ -80,7 +98,7 @@ def test_kunci_buruk_menghasilkan_json_400(klien):
 
 def test_cipher_tak_dikenal_via_api(klien):
     r = klien.post("/api/text", data={
-        "cipher": "playfair", "mode": "enc", "key": "3", "text": "HELLO", "group": "0"})
+        "cipher": "cipher_palsu", "mode": "enc", "key": "3", "text": "HELLO", "group": "0"})
     assert r.status_code == 400
     assert "error" in r.get_json()
 

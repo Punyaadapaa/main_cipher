@@ -29,7 +29,8 @@ const HINT = {
   vigenere: "Kata kunci bebas panjang, mis. LEMON",
   hill: "Matriks n×n baris demi baris, mis. 3 3 2 5 (2×2). Determinan koprima mod 26 (teks) / ganjil (file)",
   permutation: "Permutasi 1..m, mis. 3 1 2 (blok m huruf)",
-  otp: "Unggah file kunci. Jika kosong, isi kolom kunci dengan huruf kunci."
+  otp: "Unggah file kunci. Jika kosong, isi kolom kunci dengan huruf kunci.",
+  playfair: "Kata kunci alfabet, mis. MONARCHY (matriks 5×5, I/J digabung)"
 };
 
 const hasil = { plain: "", cipher: "", blob: null, nama: null };

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Classic Ciphers</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<main>
+<h1>🔐 Classic Ciphers (Shift · Substitution · Affine · Vigenere · Hill · Permutation · OTP)</h1>
+<div class="card"><div class="row">
+<div><label>Cipher</label><select id="cipher">
+<option value="shift">Shift Cipher</option><option value="substitution">Substitution Cipher</option>
+<option value="affine">Affine Cipher</option><option value="vigenere">Vigenere Cipher</option>
+<option value="hill">Hill Cipher</option><option value="permutation">Permutation Cipher</option>
+<option value="otp">One-Time Pad</option></select></div>
+<div><label>Operasi</label><select id="mode"><option value="enc">Enkripsi</option><option value="dec">Dekripsi</option></select></div></div>
+<label>Kunci</label><input id="key"><div class="hint" id="hint"></div>
+<div id="kf" style="display:none"><label>File kunci OTP (huruf acak)</label><input type="file" id="keyfile">
+<button class="s" onclick="location='/api/genkey?n=50000'">Bangkitkan kunci acak 50.000 huruf</button></div></div>
+<div class="card"><div class="tabs"><button id="t1" onclick="tab(1)">Teks</button><button id="t2" class="s" onclick="tab(2)">File</button></div>
+<div id="p1"><label>Pesan</label><textarea id="text"></textarea>
+<label>Format cipherteks</label><label class="i"><input type="radio" name="g" value="0" checked> Tanpa spasi</label>
+<label class="i"><input type="radio" name="g" value="5"> Kelompok 5 huruf</label><br>
+<button onclick="doText()">Proses</button><button class="s" onclick="saveOut()">Simpan hasil ke file</button>
+<label>Hasil</label><textarea id="out" readonly></textarea></div>
+<div id="p2" style="display:none"><label>File (apa saja, termasuk biner)</label><input type="file" id="file">
+<div class="hint">Enkripsi menghasilkan file .dat (nama asli tersimpan di dalamnya). Dekripsi otomatis memulihkan nama &amp; ekstensi asli.</div>
+<button onclick="doFile()">Proses &amp; Unduh</button></div>
+<div class="err" id="err"></div></div>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</main>
+</body>
+</html>

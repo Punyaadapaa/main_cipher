@@ -112,3 +112,16 @@ def test_genkey_n_tidak_valid(klien):
     assert r.status_code == 400
     assert r.is_json
     assert "error" in r.get_json()
+
+
+# ---------- pemisahan antarmuka: HTML/CSS/JS di templates/ + static/ ----------
+
+def test_aset_css_dan_js_tersedia(klien):
+    assert klien.get("/static/style.css").status_code == 200
+    assert klien.get("/static/app.js").status_code == 200
+
+
+def test_halaman_memuat_aset(klien):
+    html = klien.get("/").data
+    assert b"static/style.css" in html
+    assert b"static/app.js" in html

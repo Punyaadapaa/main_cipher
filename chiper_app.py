@@ -5,137 +5,14 @@ Jalankan:  pip install flask  &&  python cipher_app.py   ->  buka http://127.0.0
 Mode TEKS : alfabet 26 huruf (A-Z). Karakter non-huruf dibuang.
 Mode FILE : semua byte (termasuk header) diproses dengan versi mod 256 dari cipher yang sama.
 """
-import io, math, random, re, secrets, struct
+import io, secrets, struct
 from urllib.parse import quote
 from flask import Flask, request, jsonify, send_file
 
+from ciphers import KeyErr, run
+
 app = Flask(__name__)
 MAGIC = b"PYCF"
-
-
-class KeyErr(Exception):
-    pass
-
-
-def ints(s):
-    try:
-        return [int(x) for x in re.split(r"[\s,;]+", s.strip()) if x]
-    except ValueError:
-        raise KeyErr("Kunci harus berupa angka (dipisah spasi/koma).")
-
-
-def det(m):
-    if len(m) == 1:
-        return m[0][0]
-    return sum((-1) ** j * m[0][j] * det([r[:j] + r[j + 1:] for r in m[1:]]) for j in range(len(m)))
-
-
-def inv_matrix(m, M):
-    n = len(m)
-    d = det(m) % M
-    if math.gcd(d, M) != 1:
-        raise KeyErr(f"Matriks kunci tidak punya balikan mod {M} (det = {d}).")
-    di = pow(d, -1, M)
-    if n == 1:
-        return [[di]]
-    adj = [[0] * n for _ in range(n)]
-    for i in range(n):
-        for j in range(n):
-            minor = [r[:j] + r[j + 1:] for k, r in enumerate(m) if k != i]
-            adj[j][i] = (-1) ** (i + j) * det(minor)
-    return [[(di * adj[i][j]) % M for j in range(n)] for i in range(n)]
-
-
-def run(name, data, key, enc, M, keybytes=None):
-    """data: list int (0..M-1). Mengembalikan list int hasil."""
-    txt = M == 26
-    sg = 1 if enc else -1
-    if name == "shift":
-        k = ints(key)
-        if len(k) != 1:
-            raise KeyErr("Shift: masukkan 1 angka.")
-        return [(x + sg * k[0]) % M for x in data]
-
-    if name == "affine":
-        k = ints(key)
-        if len(k) != 2:
-            raise KeyErr("Affine: masukkan 2 angka 'a b'.")
-        a, b = k
-        if math.gcd(a, M) != 1:
-            raise KeyErr(f"Affine: a harus relatif prima dengan {M}.")
-        if enc:
-            return [(a * x + b) % M for x in data]
-        ai = pow(a, -1, M)
-        return [(ai * (x - b)) % M for x in data]
-
-    if name == "vigenere":
-        kk = [ord(c) - 65 for c in key.upper() if "A" <= c <= "Z"] if txt else list(key.encode())
-        if not kk:
-            raise KeyErr("Vigenere: kunci kosong (teks mode butuh huruf).")
-        return [(x + sg * kk[i % len(kk)]) % M for i, x in enumerate(data)]
-
-    if name == "substitution":
-        if txt:
-            k = [ord(c) - 65 for c in key.upper() if "A" <= c <= "Z"]
-            if sorted(k) != list(range(26)):
-                raise KeyErr("Substitusi: kunci harus permutasi 26 huruf berbeda.")
-        else:
-            k = list(range(256))
-            random.Random(key).shuffle(k)
-        if not enc:
-            inv = [0] * M
-            for i, v in enumerate(k):
-                inv[v] = i
-            k = inv
-        return [k[x] for x in data]
-
-    if name == "hill":
-        k = ints(key)
-        n = math.isqrt(len(k))
-        if n == 0 or n * n != len(k):
-            raise KeyErr("Hill: jumlah angka kunci harus kuadrat sempurna (4, 9, 16, ...).")
-        m = [[v % M for v in k[i * n:(i + 1) * n]] for i in range(n)]
-        mi = inv_matrix(m, M)
-        mat = m if enc else mi
-        if enc:
-            data = data + [23 if txt else 0] * (-len(data) % n)  # pad 'X' / 0
-        elif len(data) % n:
-            raise KeyErr(f"Hill: panjang cipherteks harus kelipatan {n}.")
-        out = []
-        for i in range(0, len(data), n):
-            blk = data[i:i + n]
-            out += [sum(mat[r][c] * blk[c] for c in range(n)) % M for r in range(n)]
-        return out
-
-    if name == "permutation":
-        p = ints(key)
-        m = len(p)
-        if m == 0 or sorted(p) != list(range(1, m + 1)):
-            raise KeyErr("Permutasi: kunci harus permutasi 1..m, mis. '3 1 4 2'.")
-        if enc:
-            data = data + [23 if txt else 0] * (-len(data) % m)
-        elif len(data) % m:
-            raise KeyErr(f"Permutasi: panjang cipherteks harus kelipatan {m}.")
-        out = []
-        for i in range(0, len(data), m):
-            blk = data[i:i + m]
-            if enc:
-                out += [blk[p[j] - 1] for j in range(m)]
-            else:
-                res = [0] * m
-                for j in range(m):
-                    res[p[j] - 1] = blk[j]
-                out += res
-        return out
-
-    if name == "otp":
-        kb = keybytes if keybytes else key.encode()
-        kk = [b - 65 for b in kb.upper() if 65 <= b <= 90] if txt else list(kb)
-        if len(kk) < len(data):
-            raise KeyErr(f"OTP: kunci ({len(kk)}) lebih pendek dari pesan ({len(data)}).")
-        return [(x + sg * kk[i]) % M for i, x in enumerate(data)]
-
-    raise KeyErr("Cipher tidak dikenal.")
 
 
 def keyfile():

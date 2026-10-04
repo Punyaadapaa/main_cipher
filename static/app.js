@@ -1,4 +1,4 @@
-// Logika antarmuka Classic Ciphers: kirim form ke /api/*, tampilkan hasil, unduh file.
+// >_ MainCipher — interface logic: POST to /api/*, render results, download
 "use strict";
 const $ = id => document.getElementById(id);
 
@@ -11,7 +11,7 @@ const $ = id => document.getElementById(id);
   try { saved = localStorage.getItem("cc-theme"); } catch(e){}
   const apply = t => {
     document.documentElement.setAttribute("data-theme", t);
-    if (lbl) lbl.textContent = (t === "dark") ? "Gelap" : "Terang";
+    if (lbl) lbl.textContent = (t === "dark") ? "Dark" : "Light";
   };
   apply(saved || sys());
   btn.addEventListener("click", () => {
@@ -23,14 +23,14 @@ const $ = id => document.getElementById(id);
 })();
 
 const HINT = {
-  shift: "Satu angka, mis. 3",
-  substitution: "26 huruf berbeda (permutasi alfabet), mis. QWERTYUIOPASDFGHJKLZXCVBNM",
-  affine: "Dua angka 'a b'; a relatif prima dengan 26 (teks) / ganjil untuk file (mod 256), mis. 7 3",
-  vigenere: "Kata kunci bebas panjang, mis. LEMON",
-  hill: "Matriks n×n baris demi baris, mis. 3 3 2 5 (2×2). Determinan koprima mod 26 (teks) / ganjil (file)",
-  permutation: "Permutasi 1..m, mis. 3 1 2 (blok m huruf)",
-  otp: "Unggah file kunci. Jika kosong, isi kolom kunci dengan huruf kunci.",
-  playfair: "Kata kunci alfabet, mis. MONARCHY (matriks 5×5, I/J digabung)"
+  shift: "Single number, e.g. 3",
+  substitution: "26 distinct letters (alphabet permutation), e.g. QWERTYUIOPASDFGHJKLZXCVBNM",
+  affine: "Two numbers 'a b'; a must be coprime with 26 (text) / odd for file (mod 256), e.g. 7 3",
+  vigenere: "Keyword of any length, e.g. LEMON",
+  hill: "n×n matrix row-wise, e.g. 3 3 2 5 (2×2). Determinant must be coprime with 26 (text) / odd (file)",
+  permutation: "Permutation 1..m, e.g. 3 1 2 (block of m letters)",
+  otp: "Upload a key file. If empty, enter the key letters in the field instead.",
+  playfair: "Alphabetic keyword, e.g. MONARCHY (5×5 matrix, I/J merged)"
 };
 
 const hasil = { plain: "", cipher: "", blob: null, nama: null };
@@ -66,8 +66,8 @@ function dataForm(mode) {
 function sedangProses(status) {
   $("btn-enc").disabled = status;
   $("btn-dec").disabled = status;
-  $("btn-enc").textContent = status ? "Memproses…" : "Enkripsi!";
-  $("btn-dec").textContent = status ? "Memproses…" : "Dekripsi!";
+  $("btn-enc").textContent = status ? "Working…" : "Encrypt!";
+  $("btn-dec").textContent = status ? "Working…" : "Decrypt!";
 }
 
 function tampilkanHasilTeks(plain, cipher) {
@@ -78,7 +78,7 @@ function tampilkanHasilTeks(plain, cipher) {
   $("grid-teks").hidden = false;
   $("grid-file").hidden = true;
   $("results").hidden = false;
-  $("dl-info").textContent = "Cipherteks tampil sesuai format yang dipilih — tombol Simpan menyimpannya ke file .txt";
+  $("dl-info").textContent = "Ciphertext shown in selected format — use Save to download as .txt";
 }
 
 async function prosesTeks(mode) {
@@ -98,20 +98,20 @@ async function prosesTeks(mode) {
 
 async function prosesFile(mode) {
   const u = $("file").files[0];
-  if (!u) { $("err").textContent = "Pilih file terlebih dahulu."; return; }
+  if (!u) { $("err").textContent = "Please select a file first."; return; }
   const f = dataForm(mode);
   f.append("file", u);
   const r = await fetch("/api/file", { method: "POST", body: f });
   if (!r.ok) { $("err").textContent = (await r.json()).error; return; }
   hasil.blob = await r.blob();
   hasil.nama = decodeURIComponent(r.headers.get("X-Filename"));
-  hasil.plain = ""; hasil.cipher = "";  // bersihkan hasil teks lama agar tombol Simpan tak menyimpan data basi
+  hasil.plain = ""; hasil.cipher = "";
   $("grid-teks").hidden = true;
   $("grid-file").hidden = false;
   $("results").hidden = false;
   $("hasil-file").textContent = mode === "enc"
-    ? "Enkripsi selesai: " + hasil.nama + " (seluruh byte asli ikut terenkripsi; file tak bisa dibuka aplikasi aslinya sebelum didekripsi)."
-    : "Dekripsi selesai: " + hasil.nama + " (file asli dipulihkan dan bisa dibuka lagi).";
+    ? "Encrypted: " + hasil.nama + " (every byte was encrypted; file cannot be opened before decryption)."
+    : "Decrypted: " + hasil.nama + " (original file restored and ready to open).";
   $("dl-info").textContent = "";
 }
 
@@ -122,7 +122,7 @@ async function proses(mode) {
     if (tipeInput() === "teks") await prosesTeks(mode);
     else await prosesFile(mode);
   } catch (e) {
-    $("err").textContent = "Gagal memproses: " + e.message;
+    $("err").textContent = "Failed: " + e.message;
   } finally {
     sedangProses(false);
   }
@@ -139,8 +139,8 @@ function unduh(konten, nama, tipe) {
 
 $("btn-enc").addEventListener("click", () => proses("enc"));
 $("btn-dec").addEventListener("click", () => proses("dec"));
-$("save-plain").addEventListener("click", () => { if (hasil.plain) unduh(hasil.plain, "plainteks.txt"); else $("err").textContent = "Belum ada plaintext untuk disimpan — jalankan Enkripsi/Dekripsi dulu."; });
-$("save-cipher").addEventListener("click", () => { if (hasil.cipher) unduh(hasil.cipher, "cipherteks.txt"); else $("err").textContent = "Belum ada cipherteks untuk disimpan — jalankan Enkripsi/Dekripsi dulu."; });
+$("save-plain").addEventListener("click", () => { if (hasil.plain) unduh(hasil.plain, "plaintext.txt"); else $("err").textContent = "No plaintext to save — run Encrypt or Decrypt first."; });
+$("save-cipher").addEventListener("click", () => { if (hasil.cipher) unduh(hasil.cipher, "ciphertext.txt"); else $("err").textContent = "No ciphertext to save — run Encrypt or Decrypt first."; });
 $("unduh-file").addEventListener("click", () => { if (hasil.blob) unduh(hasil.blob, hasil.nama); });
 $("genkey").addEventListener("click", async () => {
   const r = await fetch("/api/genkey?n=50000");

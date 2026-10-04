@@ -90,7 +90,16 @@ function dataForm() {
 
 async function prosesTeks() {
   const f = dataForm();
-  f.append("text", $("text").value);
+  const teks = $("text").value;
+  // hasil otomatis: saat pesan kosong, bersihkan hasil tanpa menampilkan error
+  if (!/[A-Za-z]/.test(teks)) {
+    $("err").textContent = "";
+    $("out").value = "";
+    $("status-line").textContent = teks ? "Tunggu ada huruf A-Z…" : "";
+    $("out-title").textContent = mode === "enc" ? "Ciphertext" : "Plaintext";
+    return;
+  }
+  f.append("text", teks);
   f.append("group", formatGroup());
   const r = await fetch("/api/text", { method: "POST", body: f });
   const j = await r.json();
@@ -137,13 +146,26 @@ function unduh(konten, nama, tipe) {
   URL.revokeObjectURL(a.href);
 }
 
+/* ---- hasil otomatis: proses ulang dengan debounce tiap kontrol berubah ---- */
+let timerAuto = null;
+function autoProses(delay) {
+  clearTimeout(timerAuto);
+  timerAuto = setTimeout(proses, delay === undefined ? 250 : delay);
+}
+
 $("btn-enc").addEventListener("click", () => { setMode("enc"); proses(); });
 $("btn-dec").addEventListener("click", () => { setMode("dec"); proses(); });
-$("cipher").addEventListener("change", perbarui);
+$("cipher").addEventListener("change", () => { perbarui(); autoProses(0); });
 $("shift-dec").addEventListener("click", () => ubahShift(-1));
 $("shift-inc").addEventListener("click", () => ubahShift(1));
-$("key").addEventListener("input", () => { if ($("cipher").value === "shift") sinkronShift(); });
-document.querySelectorAll('input[name="input_type"]').forEach(r => r.addEventListener("change", perbarui));
+$("text").addEventListener("input", () => autoProses());
+$("key").addEventListener("input", () => {
+  if ($("cipher").value === "shift") sinkronShift();
+  autoProses();
+});
+document.querySelectorAll('input[name="input_type"]').forEach(r => r.addEventListener("change", () => { perbarui(); autoProses(0); }));
+document.querySelectorAll('input[name="group"]').forEach(r => r.addEventListener("change", () => autoProses(0)));
+$("keyfile").addEventListener("change", () => autoProses(0));
 $("save-plain").addEventListener("click", () => unduh($("text").value, mode === "enc" ? "plainteks.txt" : "cipherteks.txt"));
 $("save-out").addEventListener("click", () => unduh($("out").value, mode === "enc" ? "cipherteks.txt" : "plainteks.txt"));
 $("unduh-file").addEventListener("click", () => { if (hasil.blob) unduh(hasil.blob, hasil.nama); });

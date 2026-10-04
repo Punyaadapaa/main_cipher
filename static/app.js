@@ -7,7 +7,7 @@ const $ = id => document.getElementById(id);
   const lbl = document.getElementById("ti-label");
   const apply = t => {
     document.documentElement.setAttribute("data-theme", t);
-    if (lbl) lbl.textContent = (t === "dark") ? "Terang" : "Gelap";
+    if (lbl) lbl.textContent = (t === "dark") ? "Gelap" : "Terang";
     try{ localStorage.setItem("cc-theme", t); }catch(e){}
   };
   apply(document.documentElement.getAttribute("data-theme") || "light");

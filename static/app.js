@@ -155,6 +155,8 @@ function autoProses(delay) {
 
 $("btn-enc").addEventListener("click", () => { setMode("enc"); proses(); });
 $("btn-dec").addEventListener("click", () => { setMode("dec"); proses(); });
+$("btn-encrypt").addEventListener("click", () => { setMode("enc"); proses(); });
+$("btn-decrypt").addEventListener("click", () => { setMode("dec"); proses(); });
 $("cipher").addEventListener("change", () => { perbarui(); autoProses(0); });
 $("shift-dec").addEventListener("click", () => ubahShift(-1));
 $("shift-inc").addEventListener("click", () => ubahShift(1));

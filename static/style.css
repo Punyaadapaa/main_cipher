@@ -67,8 +67,8 @@ main.wrap{max-width:1160px}
 /* desktop 2-col workspace */
 main.wrap{margin:0 auto}
 @media(min-width:980px){
-  main.wrap{display:grid;grid-template-columns:460px minmax(0,1fr);gap:24px;align-items:start}
-  main.wrap:has(#results[hidden]){grid-template-columns:680px;justify-content:center}
+  main.wrap{display:grid;grid-template-columns:minmax(0,1160px);gap:24px;align-items:start}
+  main.wrap:has(#results[hidden]){grid-template-columns:minmax(0,1160px)}
 }
 
 /* panels — flat, border only */

@@ -79,31 +79,31 @@ Tugas Kelompok/
 
 ## Status Spesifikasi Tugas (Bagian A)
 
-| No | Spesifikasi | Berhasil (V) | Keterangan |
-|----|-------------|--------------|------------|
-| 1 | Shift Cipher | V | Geser alfabet 1 angka (Caesar) |
-| 2 | Substitution Cipher | V | Tabel permutasi 26 huruf |
-| 3 | Affine Cipher | V | $C = (aP + b) \bmod m$, cek koprima |
-| 4 | Vigenere Cipher | V | Kunci alfabet diulang sepanjang pesan |
-| 5 | Hill Cipher | V | Matriks $n \times n$ + balikan modulo; padding PKCS-like |
-| 6 | Permutation Cipher | V | Permutasi $1 \dots m$ per blok; padding PKCS-like |
-| 7 | One-Time Pad | V | Kunci dari file huruf acak (≥ 50.000 huruf) |
-| — | Playfair Cipher | V | Matriks $5 \times 5$, I/J digabung (khusus mode teks) |
+| No | Spesifikasi | Berhasil | Keterangan |
+|----|-------------|:--------:|------------|
+| 1 | Shift Cipher | ✅ | Geser alfabet 1 angka (Caesar) |
+| 2 | Substitution Cipher | ✅ | Tabel permutasi 26 huruf |
+| 3 | Affine Cipher | ✅ | $C = (aP + b) \bmod m$, cek koprima |
+| 4 | Vigenere Cipher | ✅ | Kunci alfabet diulang sepanjang pesan |
+| 5 | Hill Cipher | ✅ | Matriks $n \times n$ + balikan modulo; padding PKCS-like |
+| 6 | Permutation Cipher | ✅ | Permutasi $1 \dots m$ per blok; padding PKCS-like |
+| 7 | One-Time Pad | ✅ | Kunci dari file huruf acak (≥ 50.000 huruf) |
+| — | Playfair Cipher | ✅ | Matriks $5 \times 5$, I/J digabung (khusus mode teks) |
 
 **Spesifikasi umum:**
 
-| No | Spesifikasi | Berhasil (V) | Keterangan |
-|----|-------------|--------------|------------|
-| 1 | Terima pesan file / ketikan | V | Radio *Input type: Text / File* |
-| 2 | Hanya enkripsi huruf alfabet (Vigenere/Playfair/OTP) | V | Karakter non-huruf dibuang |
-| 3 | OTP kunci dari file huruf acak (banyak) | V | Tombol *Generate* 50.000 huruf |
-| 4 | Dekripsi mengembalikan plainteks semula | V | Terverifikasi 68 tes otomatis |
-| 5 | Tampil plainteks + cipherteks (tanpa spasi / 5-huruf) | V | Radio *Ciphertext format* |
-| 6 | Simpan cipherteks ke file | V | Tombol *Save…* / mode file `.dat` |
-| 7 | Kunci dari pengguna, panjang bebas | V | Kolom *Key* |
-| 8 | Enkripsi file: semua byte termasuk header | V | Aritmetika modulo 256 |
-| 9 | `.dat` menyimpan nama/ekstensi asli, dipulihkan saat dekripsi | V | Magic `PYCF` + nama + panjang |
-| 10 | Pustaka balikan modulo/matriks | V | `pow(x, -1, m)` + implementasi sendiri |
+| No | Spesifikasi | Berhasil | Keterangan |
+|----|-------------|:--------:|------------|
+| 1 | Terima pesan file / ketikan | ✅ | Radio *Input type: Text / File* |
+| 2 | Hanya enkripsi huruf alfabet (Vigenere/Playfair/OTP) | ✅ | Karakter non-huruf dibuang |
+| 3 | OTP kunci dari file huruf acak (banyak) | ✅ | Tombol *Generate* 50.000 huruf |
+| 4 | Dekripsi mengembalikan plainteks semula | ✅ | Terverifikasi 68 tes otomatis |
+| 5 | Tampil plainteks + cipherteks (tanpa spasi / 5-huruf) | ✅ | Radio *Ciphertext format* |
+| 6 | Simpan cipherteks ke file | ✅ | Tombol *Save…* / mode file `.dat` |
+| 7 | Kunci dari pengguna, panjang bebas | ✅ | Kolom *Key* |
+| 8 | Enkripsi file: semua byte termasuk header | ✅ | Aritmetika modulo 256 |
+| 9 | `.dat` menyimpan nama/ekstensi asli, dipulihkan saat dekripsi | ✅ | Magic `PYCF` + nama + panjang |
+| 10 | Pustaka balikan modulo/matriks | ✅ | `pow(x, -1, m)` + implementasi sendiri |
 
 ## Catatan / Batasan
 

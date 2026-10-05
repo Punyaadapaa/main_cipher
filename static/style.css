@@ -44,12 +44,12 @@ body{margin:0;background:var(--bg);color:var(--text);font:14.5px/1.6 "Inter",sys
 ::selection{background:var(--accent);color:var(--surface)}
 
 /* layout */
-.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
-@media(max-width:640px){.wrap{padding:0 16px}}
+.wrap{max-width:none;padding-left:clamp(16px,3vw,40px);padding-right:clamp(16px,3vw,40px)}
+main.wrap{max-width:1160px}
+@media(max-width:640px){.wrap{padding-left:16px;padding-right:16px}}
 
 /* topbar — editorial, flat, full-bleed */
 .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:22px 0 20px;margin-bottom:28px}
-.topbar .wrap{max-width:none;padding-left:clamp(16px,3vw,40px);padding-right:clamp(16px,3vw,40px)}
 .topbar h1{margin:0;font-size:22px;font-weight:750;letter-spacing:-.03em;line-height:1.1;display:flex;align-items:center;gap:8px}
 .prompt{color:var(--muted);font-weight:700;letter-spacing:-.02em}
 .topbar .sub{margin:6px 0 0;font-size:12.5px;color:var(--muted);letter-spacing:-.01em;max-width:640px}
@@ -65,7 +65,7 @@ body{margin:0;background:var(--bg);color:var(--text);font:14.5px/1.6 "Inter",sys
 :root[data-theme="dark"] .ti-sun{display:none !important}
 
 /* desktop 2-col workspace */
-main.wrap{display:block}
+main.wrap{margin:0 auto}
 @media(min-width:980px){
   main.wrap{display:grid;grid-template-columns:460px minmax(0,1fr);gap:24px;align-items:start}
   main.wrap:has(#results[hidden]){grid-template-columns:680px;justify-content:center}

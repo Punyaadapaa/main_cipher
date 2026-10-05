@@ -1,6 +1,6 @@
 """
 Aplikasi Kriptografi Klasik (GUI Web, Flask)
-Jalankan:  pip install flask  &&  python chiper_app.py   ->  buka http://127.0.0.1:5000
+Jalankan:  pip install flask  &&  python cipher_app.py   ->  buka http://127.0.0.1:5000
 
 Mode TEKS : alfabet 26 huruf (A-Z). Karakter non-huruf dibuang.
 Mode FILE : semua byte (termasuk header) diproses dengan versi mod 256 dari cipher yang sama.

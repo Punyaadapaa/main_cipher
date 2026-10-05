@@ -1,12 +1,12 @@
 """
-Tes route Flask (chiper_app.py) memakai test client:
+Tes route Flask (cipher_app.py) memakai test client:
 alur normal, error ramah untuk input buruk, dan round-trip file.
 """
 from io import BytesIO
 
 import pytest
 
-from chiper_app import app
+from cipher_app import app
 
 
 @pytest.fixture()

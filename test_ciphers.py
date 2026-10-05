@@ -49,22 +49,23 @@ def test_substitution_vektor_klasik():
 
 
 def test_hill_vektor_2x2():
-    # Matriks [[3,3],[2,5]], "HELP" -> "HIAT"
+    # Matriks [[3,3],[2,5]]; blok pertama "HELP" -> "HIAT" (vektor klasik).
+    # Panjang kelipatan blok tetap ditambah satu blok padding, jadi cek blok awal.
     out = run("hill", A("HELP"), "3 3 2 5", True, 26)
-    assert S(out) == "HIAT"
+    assert S(out).startswith("HIAT")
     assert S(run("hill", out, "3 3 2 5", False, 26)) == "HELP"
 
 
 def test_hill_vektor_3x3():
     # Matriks GYBNQKURP (Wikipedia), "ACT" -> "POH"
     out = run("hill", A("ACT"), "6 24 1 13 16 10 20 17 15", True, 26)
-    assert S(out) == "POH"
+    assert S(out).startswith("POH")
     assert S(run("hill", out, "6 24 1 13 16 10 20 17 15", False, 26)) == "ACT"
 
 
 def test_permutation_vektor_klasik():
     out = run("permutation", A("ABCD"), "3 1 4 2", True, 26)
-    assert S(out) == "CADB"
+    assert S(out).startswith("CADB")
     assert S(run("permutation", out, "3 1 4 2", False, 26)) == "ABCD"
 
 
@@ -91,9 +92,14 @@ def test_playfair_huruf_dobel_dan_ganjil():
     # "BALLOON" (7 huruf, ada LL dan OO) -> enkripsi menyisipkan X
     out = run("playfair", A("BALLOON"), "MONARCHY", True, 26)
     assert len(out) % 2 == 0
-    # Dekripsi mengembalikan teks dengan X yang disisipkan
-    dec = S(run("playfair", out, "MONARCHY", False, 26))
-    assert "BA" in dec and "ON" in dec
+    # Dekripsi membuang kembali X sisipan -> plainteks semula
+    assert S(run("playfair", out, "MONARCHY", False, 26)) == "BALLOON"
+
+
+@pytest.mark.parametrize("pesan", ["LETTER", "COFFEE", "HAPPY", "TOOTH", "SUCCESS", "BALLOONX"])
+def test_playfair_round_trip_pengisi_x(pesan):
+    out = run("playfair", A(pesan), "MONARCHY", True, 26)
+    assert S(run("playfair", out, "MONARCHY", False, 26)) == pesan
 
 
 # ---------- round-trip properti (mode teks) ----------
@@ -122,18 +128,36 @@ def test_round_trip_teks_otp():
     assert S(run("otp", out, "", False, 26, keybytes=kunci)) == PESAN
 
 
-# ---------- padding blok (Hill/Permutation) harus dibuang saat dekripsi ----------
+# ---------- padding blok (Hill/Permutation) dibuang dengan pasti ----------
 
-def test_hill_padding_x_dibuang_saat_dekripsi():
-    # 5 huruf, blok 2 -> enkripsi memad 1 'X'; dekripsi harus kembali 5 huruf
+def test_hill_padding_dibuang_saat_dekripsi():
+    # 5 huruf, blok 2 -> enkripsi menambah padding; dekripsi kembali 5 huruf
     out = run("hill", A("HELLO"), "3 3 2 5", True, 26)
     assert S(run("hill", out, "3 3 2 5", False, 26)) == "HELLO"
 
 
-def test_permutation_padding_x_dibuang_saat_dekripsi():
-    # 5 huruf, blok 4 -> enkripsi memad 3 'X'; dekripsi harus kembali 5 huruf
+def test_permutation_padding_dibuang_saat_dekripsi():
+    # 5 huruf, blok 4 -> enkripsi menambah padding; dekripsi kembali 5 huruf
     out = run("permutation", A("HELLO"), "3 1 4 2", True, 26)
     assert S(run("permutation", out, "3 1 4 2", False, 26)) == "HELLO"
+
+
+def test_hill_pertahankan_x_asli_di_akhir():
+    # Plainteks berakhiran 'X' betulan tidak ikut terpotong (dulu bug).
+    for pesan in ["AX", "X", "HELPX", "XX"]:
+        out = run("hill", A(pesan), "3 3 2 5", True, 26)
+        assert S(run("hill", out, "3 3 2 5", False, 26)) == pesan
+
+
+def test_permutation_pertahankan_x_asli_di_akhir():
+    for pesan in ["AX", "X", "ABCDX", "XX"]:
+        out = run("permutation", A(pesan), "3 1 4 2", True, 26)
+        assert S(run("permutation", out, "3 1 4 2", False, 26)) == pesan
+
+
+def test_hill_padding_tak_valid_ditolak():
+    with pytest.raises(KeyErr):
+        run("hill", A("ABCD") + [0, 25], "3 3 2 5", False, 26)
 
 
 # ---------- mode file (mod 256, semua byte 0..255) ----------

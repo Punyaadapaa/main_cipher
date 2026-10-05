@@ -42,12 +42,19 @@ const tipeInput = () => document.querySelector('input[name="input_type"]:checked
 const formatGroup = () => document.querySelector('input[name="group"]:checked').value;
 
 function perbarui() {
-  $("hint").textContent = HINT[$("cipher").value];
-  $("otp-key").hidden = $("cipher").value !== "otp";
+  const c = $("cipher").value;
   const teks = tipeInput() === "teks";
+  const pfFile = !teks && c === "playfair";
+  $("hint").textContent = pfFile
+    ? "Playfair only supports text mode (alphabet), not binary files."
+    : HINT[c];
+  $("otp-key").hidden = c !== "otp";
   $("panel-teks").hidden = !teks;
   $("panel-file").hidden = teks;
   $("fmt-card").hidden = !teks;
+  $("btn-enc").disabled = pfFile;
+  $("btn-dec").disabled = pfFile;
+  if (pfFile) $("err").textContent = "Playfair only supports text mode (alphabet), not binary files.";
 }
 document.querySelectorAll('input[name="input_type"]').forEach(r => r.addEventListener("change", () => { $("err").textContent = ""; perbarui(); }));
 $("cipher").addEventListener("change", () => { $("err").textContent = ""; perbarui(); });
@@ -110,6 +117,7 @@ async function prosesTeks(mode) {
 async function prosesFile(mode) {
   const u = $("file").files[0];
   if (!u) { $("err").textContent = "Please select a file first."; return; }
+  if ($("cipher").value === "playfair") { $("err").textContent = "Playfair only supports text mode (alphabet), not binary files."; return; }
   const f = dataForm(mode);
   f.append("file", u);
   const r = await fetch("/api/file", { method: "POST", body: f });

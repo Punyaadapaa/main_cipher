@@ -9,14 +9,14 @@ Aplikasi web untuk enkripsi dan dekripsi menggunakan 8 cipher klasik. Memenuhi s
    - **Substitution Cipher** (monoalfabet, tabel permutasi 26 huruf)
    - **Affine Cipher** ($C = (a \cdot P + b) \pmod m$)
    - **Vigenere Cipher** (kunci alfabet diulang)
-   - **Playfair Cipher** (matriks $5 \times 5$, I/J digabung)
+   - **Playfair Cipher** (matriks $5 \times 5$, I/J digabung; khusus mode teks/alfabet)
    - **Hill Cipher** (matriks $n \times n$ per blok)
    - **Permutation Cipher** (permutasi $1 \dots m$ per blok)
    - **One-Time Pad (OTP)** (kunci dari file huruf acak sepanjang pesan)
 
 2. **Dua Mode Input:**
-   - **Mode Teks:** memproses alfabet A–Z. Karakter non-huruf diabaikan. Cipherteks dapat diformat *tanpa spasi* atau *kelompok 5 huruf*.
-   - **Mode File:** membaca dan mengenkripsi seluruh byte file sembarang (termasuk header file) dengan aritmetika modulo 256. Hasil disimpan sebagai `.dat` dengan metadata magic `PYCF` untuk pemulihan nama & ekstensi asli secara otomatis saat didekripsi.
+   - **Mode Teks:** memproses alfabet A–Z. Karakter non-huruf diabaikan. Cipherteks dapat diformat *tanpa spasi* atau *kelompok 5 huruf*. Hill & Permutasi memakai padding ala PKCS#7 (jumlah padding ikut tersimpan) sehingga dekripsi mengembalikan plainteks persis, termasuk bila berakhiran huruf `X`. Playfair membuang kembali huruf pengisi `X` saat dekripsi.
+   - **Mode File:** membaca dan mengenkripsi seluruh byte file sembarang (termasuk header file) dengan aritmetika modulo 256. Hasil disimpan sebagai `.dat` dengan metadata magic `PYCF` untuk pemulihan nama & ekstensi asli secara otomatis saat didekripsi. Playfair tidak tersedia untuk mode file (hanya alfabet).
 
 3. **Fitur Tambahan:**
    - Pembangkit file kunci OTP acak (default 50.000 huruf)
@@ -34,7 +34,7 @@ Aplikasi web untuk enkripsi dan dekripsi menggunakan 8 cipher klasik. Memenuhi s
 
 2. **Jalankan Aplikasi:**
    ```bash
-   python chiper_app.py
+   python cipher_app.py
    ```
    Akses di browser: `http://127.0.0.1:5000`
 
@@ -53,7 +53,7 @@ python -m pytest
 ```
 Tugas Kelompok/
 ├── ciphers.py          # Logika 8 cipher klasik (mod 26 & mod 256)
-├── chiper_app.py       # Server Flask & route API (/api/text, /api/file, /api/genkey)
+├── cipher_app.py       # Server Flask & route API (/api/text, /api/file, /api/genkey)
 ├── templates/
 │   └── index.html      # Antarmuka web
 ├── static/

@@ -53,6 +53,39 @@ def matriks_balikan(m, mod):
 
 
 # ---------------------------------------------------------------------------
+# Padding blok (Hill/Permutation).
+#
+# Mode teks memakai skema ala PKCS#7: panjang yang bukan kelipatan n dipad
+# sebanyak p (1..n) buah karakter bernilai (p-1), dan bila panjang sudah
+# kelipatan n tetap ditambah satu blok penuh. Karena jumlah padding ikut
+# tersimpan di cipherteks, dekripsi bisa membuangnya dengan pasti (tidak
+# menebak), sehingga plainteks berakhiran 'X' betulan tidak ikut terpotong.
+#
+# Mode file memakai byte 0 sebagai padding; panjang asli disimpan di header
+# .dat sehingga route tinggal memotong hasil dekripsi.
+# ---------------------------------------------------------------------------
+
+def pad_blok(data, n, mod):
+    if mod == 26:
+        if n > 26:
+            raise KeyErr("Block size too large for text mode (max 26).")
+        p = n - (len(data) % n)
+        return data + [p - 1] * p
+    return data + [0] * (-len(data) % n)
+
+
+def unpad_blok(out, n, mod):
+    if mod != 26:
+        return out
+    if n > 26 or not out:
+        raise KeyErr("Invalid ciphertext for text mode.")
+    p = out[-1] + 1
+    if p > n or p > len(out) or any(x != out[-1] for x in out[-p:]):
+        raise KeyErr("Invalid padding — wrong key or corrupted ciphertext.")
+    return out[:-p]
+
+
+# ---------------------------------------------------------------------------
 # Tujuh cipher. Kontrak sama: (data, key, enc, mod, keybytes=None) -> list int
 # ---------------------------------------------------------------------------
 
@@ -116,7 +149,8 @@ def substitution(data, key, enc, mod, keybytes=None):
 
 def hill(data, key, enc, mod, keybytes=None):
     """Hill: split message into blocks of n letters, C = K * P (mod 26) per block.
-    Decrypt uses K^-1. Remainder padded with 'X' (text) / byte 0 (file)."""
+    Decrypt uses K^-1. Text mode pads in a PKCS#7-like scheme; file mode
+    pads with byte 0 (original length stored in the .dat header)."""
     k = angka(key)
     n = math.isqrt(len(k))
     if n == 0 or n * n != len(k):
@@ -124,20 +158,16 @@ def hill(data, key, enc, mod, keybytes=None):
     m = [[v % mod for v in k[i * n:(i + 1) * n]] for i in range(n)]
     mi = matriks_balikan(m, mod)  # selalu dicek: kunci buruk ketahuan saat enkripsi juga
     mat = m if enc else mi
-    teks = mod == 26
     if enc:
-        data = data + [23 if teks else 0] * (-len(data) % n)
+        data = pad_blok(data, n, mod)
     elif len(data) % n:
         raise KeyErr(f"Hill: ciphertext length must be a multiple of {n}.")
     out = []
     for i in range(0, len(data), n):
         blok = data[i:i + n]
         out += [sum(mat[r][c] * blok[c] for c in range(n)) % mod for r in range(n)]
-    if not enc and teks:
-        # buang padding 'X' (23) yang ditambahkan saat enkripsi (maks. n-1 buah)
-        for _ in range(n - 1):
-            if out and out[-1] == 23:
-                out.pop()
+    if not enc:
+        out = unpad_blok(out, n, mod)
     return out
 
 
@@ -148,9 +178,8 @@ def permutation(data, key, enc, mod, keybytes=None):
     m = len(p)
     if m == 0 or sorted(p) != list(range(1, m + 1)):
         raise KeyErr("Permutation: key must be a permutation 1..m, e.g. '3 1 4 2'.")
-    teks = mod == 26
     if enc:
-        data = data + [23 if teks else 0] * (-len(data) % m)
+        data = pad_blok(data, m, mod)
     elif len(data) % m:
         raise KeyErr(f"Permutation: ciphertext length must be a multiple of {m}.")
     out = []
@@ -163,11 +192,8 @@ def permutation(data, key, enc, mod, keybytes=None):
             for j in range(m):
                 res[p[j] - 1] = blok[j]
             out += res
-    if not enc and teks:
-        # buang padding 'X' (23) yang ditambahkan saat enkripsi (maks. m-1 buah)
-        for _ in range(m - 1):
-            if out and out[-1] == 23:
-                out.pop()
+    if not enc:
+        out = unpad_blok(out, m, mod)
     return out
 
 
@@ -185,6 +211,24 @@ def otp(data, key, enc, mod, keybytes=None):
         raise KeyErr(f"OTP: key ({len(kk)}) is shorter than message ({len(data)}).")
     tanda = 1 if enc else -1
     return [(x + tanda * kk[i]) % mod for i, x in enumerate(data)]
+
+
+def buang_pengisi_playfair(huruf):
+    """Buang huruf pengisi 'X' yang disisipkan Playfair saat enkripsi:
+    (a) 'X' di antara dua huruf kembar (mis. LXL -> LL) akibat aturan
+        huruf dobel, (b) satu 'X' di ujung hasil padding panjang ganjil."""
+    res = []
+    i = 0
+    while i < len(huruf):
+        if i + 2 < len(huruf) and huruf[i + 1] == "X" and huruf[i + 2] == huruf[i]:
+            res += [huruf[i], huruf[i + 2]]
+            i += 3
+        else:
+            res.append(huruf[i])
+            i += 1
+    if res and res[-1] == "X":
+        res.pop()
+    return res
 
 
 def playfair(data, key, enc, mod, keybytes=None):
@@ -242,7 +286,8 @@ def playfair(data, key, enc, mod, keybytes=None):
             raise KeyErr("Playfair: ciphertext length must be even for decryption.")
         for i in range(0, len(huruf), 2):
             out += proses_pasang(huruf[i], huruf[i + 1])
-            
+        out = buang_pengisi_playfair(out)
+
     return [ord(c) - 65 for c in out]
 
 

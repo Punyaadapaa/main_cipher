@@ -49,8 +49,11 @@ function perbarui() {
   $("panel-file").hidden = teks;
   $("fmt-card").hidden = !teks;
 }
-document.querySelectorAll('input[name="input_type"]').forEach(r => r.addEventListener("change", perbarui));
-$("cipher").addEventListener("change", perbarui);
+document.querySelectorAll('input[name="input_type"]').forEach(r => r.addEventListener("change", () => { $("err").textContent = ""; perbarui(); }));
+$("cipher").addEventListener("change", () => { $("err").textContent = ""; perbarui(); });
+$("text").addEventListener("input", () => { $("err").textContent = ""; });
+$("key").addEventListener("input", () => { $("err").textContent = ""; });
+$("file").addEventListener("change", () => { $("err").textContent = ""; });
 perbarui();
 
 function dataForm(mode) {

@@ -143,7 +143,7 @@ def test_pesan_tanpa_huruf_alfabet(klien):
     r = klien.post("/api/text", data={
         "cipher": "shift", "mode": "enc", "key": "3", "text": "123 !!!", "group": "0"})
     assert r.status_code == 400
-    assert "huruf alfabet" in r.get_json()["error"]
+    assert "at least one A-Z letter" in r.get_json()["error"]
 
 
 def test_field_tidak_lengkap_json_400(klien):
@@ -176,7 +176,7 @@ def test_halaman_memuat_aset(klien):
 
 
 def test_halaman_punya_radio_tipe_input_dan_hasil_berlabel(klien):
-    """Redesign: radio Tipe input (Teks/File) + hasil berlabel Plaintext/Ciphertext."""
+    """Redesign: Input type radios (Text/File) + results labeled Plaintext/Ciphertext."""
     html = klien.get("/").data
     assert b'name="input_type"' in html
     assert b"Plaintext" in html

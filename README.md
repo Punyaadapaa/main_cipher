@@ -55,12 +55,12 @@ Tugas Kelompok/
 ├── ciphers.py          # Logika 8 cipher klasik (mod 26 & mod 256)
 ├── chiper_app.py       # Server Flask & route API (/api/text, /api/file, /api/genkey)
 ├── templates/
-│   └── index.html      # Antarmuka web (Slice 4b)
+│   └── index.html      # Antarmuka web
 ├── static/
 │   ├── style.css       # Styling responsif & tema terang/gelap
 │   └── app.js          # Logika frontend & handler API
-├── test_ciphers.py     # 40+ unit test logika cipher (round-trip, vektor klasik)
-├── test_app.py        # 15+ integration test route & UI Flask
+├── test_ciphers.py     # 45 unit test logika cipher (round-trip, vektor klasik)
+├── test_app.py        # 14 integration test route & UI Flask (total 59 tes)
 ├── requirements.txt
 └── README.md
 ```

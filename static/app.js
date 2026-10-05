@@ -70,6 +70,13 @@ function sedangProses(status) {
   $("btn-dec").textContent = status ? "Working…" : "Decrypt!";
 }
 
+function animasiHasil() {
+  const el = $("results");
+  el.style.animation = "none";
+  void el.offsetWidth;
+  el.style.animation = "";
+}
+
 function tampilkanHasilTeks(plain, cipher) {
   hasil.plain = plain;
   hasil.cipher = cipher;
@@ -78,7 +85,8 @@ function tampilkanHasilTeks(plain, cipher) {
   $("grid-teks").hidden = false;
   $("grid-file").hidden = true;
   $("results").hidden = false;
-  $("dl-info").textContent = "Ciphertext shown in selected format — use Save to download as .txt";
+  animasiHasil();
+  $("dl-info").textContent = "Ciphertext is shown in the selected format — use Save to download as .txt";
 }
 
 async function prosesTeks(mode) {
@@ -109,6 +117,7 @@ async function prosesFile(mode) {
   $("grid-teks").hidden = true;
   $("grid-file").hidden = false;
   $("results").hidden = false;
+  animasiHasil();
   $("hasil-file").textContent = mode === "enc"
     ? "Encrypted: " + hasil.nama + " (every byte was encrypted; file cannot be opened before decryption)."
     : "Decrypted: " + hasil.nama + " (original file restored and ready to open).";

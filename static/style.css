@@ -31,6 +31,14 @@
 }
 *{box-sizing:border-box}
 [hidden]{display:none !important}
+
+/* smooth light/dark theme switch */
+body,.topbar,.panel,.theme-toggle,.ti,.flabel,.sublabel,.hint,.err,.hasil-file,.out-head label,.topbar h1,.topbar .sub{
+  transition:background-color .35s ease,color .35s ease,border-color .35s ease,box-shadow .35s ease,opacity .35s ease;
+}
+@media(prefers-reduced-motion:reduce){
+  *{transition:none !important}
+}
 html{scrollbar-gutter:stable}
 body{margin:0;background:var(--bg);color:var(--text);font:14.5px/1.6 "Inter",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
 ::selection{background:var(--accent);color:var(--surface)}
@@ -67,7 +75,9 @@ main.wrap{display:block}
 .panel{padding:22px 22px 18px;margin-bottom:16px}
 @media(min-width:980px){.panel{margin-bottom:0}}
 @media(max-width:640px){.panel{padding:16px}}
-.results{padding:18px}
+.results{padding:18px;animation:hasil-muncul .38s cubic-bezier(.22,.61,.36,1) both}
+@keyframes hasil-muncul{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.results{animation:none}}
 @media(min-width:980px){.results{position:sticky;top:22px}}
 
 /* form rows — label kiri, kontrol kanan; desktop tetap 2-col di dalam panel */
@@ -84,7 +94,7 @@ label.sublabel{display:block;font-size:12px;font-weight:650;letter-spacing:-.01e
 .hint{color:var(--muted);font-size:12px;line-height:1.5;margin:7px 0 0}
 
 /* inputs */
-input,select,textarea{width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);font:inherit;transition:border-color .15s, box-shadow .15s}
+input,select,textarea{width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);font:inherit;transition:border-color .15s, box-shadow .15s, background-color .35s ease, color .35s ease}
 input::placeholder,textarea::placeholder{color:var(--muted);opacity:.75}
 input:hover,select:hover,textarea:hover{border-color:var(--border-strong)}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px color-mix(in srgb, var(--text) 10%, transparent)}

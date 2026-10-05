@@ -16,11 +16,11 @@ class KeyErr(Exception):
 
 
 def angka(s):
-    """Ubah string kunci '3 1 4, 2' menjadi daftar [3, 1, 4, 2]."""
+    """Convert key string '3 1 4, 2' into list [3, 1, 4, 2]."""
     try:
         return [int(x) for x in re.split(r"[\s,;]+", s.strip()) if x]
     except ValueError:
-        raise KeyErr("Kunci harus berupa angka (dipisah spasi/koma).")
+        raise KeyErr("Key must be numbers (space/comma separated).")
 
 
 def determinan(m):
@@ -40,7 +40,7 @@ def matriks_balikan(m, mod):
     n = len(m)
     d = determinan(m) % mod
     if math.gcd(d, mod) != 1:
-        raise KeyErr(f"Matriks kunci tidak punya balikan mod {mod} (det = {d}).")
+        raise KeyErr(f"Key matrix has no inverse mod {mod} (det = {d}).")
     di = pow(d, -1, mod)
     if n == 1:
         return [[di]]
@@ -60,20 +60,20 @@ def shift(data, key, enc, mod, keybytes=None):
     """Shift (Caesar): C = (P + k) mod 26."""
     k = angka(key)
     if len(k) != 1:
-        raise KeyErr("Shift: masukkan 1 angka.")
+        raise KeyErr("Shift: enter a single number.")
     geser = k[0] if enc else -k[0]
     return [(x + geser) % mod for x in data]
 
 
 def affine(data, key, enc, mod, keybytes=None):
-    """Affine: C = (a*P + b) mod 26. Dekripsi: P = a^-1 * (C - b).
-    a harus relatif prima dengan mod agar punya balikan."""
+    """Affine: C = (a*P + b) mod 26. Decrypt: P = a^-1 * (C - b).
+    a must be coprime with mod to have an inverse."""
     k = angka(key)
     if len(k) != 2:
-        raise KeyErr("Affine: masukkan 2 angka 'a b'.")
+        raise KeyErr("Affine: enter two numbers 'a b'.")
     a, b = k
     if math.gcd(a, mod) != 1:
-        raise KeyErr(f"Affine: a harus relatif prima dengan {mod}.")
+        raise KeyErr(f"Affine: a must be coprime with {mod}.")
     if enc:
         return [(a * x + b) % mod for x in data]
     ai = pow(a, -1, mod)
@@ -81,13 +81,13 @@ def affine(data, key, enc, mod, keybytes=None):
 
 
 def vigenere(data, key, enc, mod, keybytes=None):
-    """Vigenere: C = (P + k_i) mod 26, kunci diulang sepanjang pesan.
-    Mode teks memakai huruf kunci; mode file memakai byte kunci."""
+    """Vigenere: C = (P + k_i) mod 26, key repeated along the message.
+    Text mode uses letters; file mode uses bytes."""
     teks = mod == 26
     if teks:
         kk = [ord(c) - 65 for c in key.upper() if "A" <= c <= "Z"]
         if not kk:
-            raise KeyErr("Vigenere: kunci kosong (teks mode butuh huruf).")
+            raise KeyErr("Vigenere: key is empty (text mode requires letters).")
     else:
         kk = list(key.encode())
     tanda = 1 if enc else -1
@@ -102,7 +102,7 @@ def substitution(data, key, enc, mod, keybytes=None):
     if teks:
         k = [ord(c) - 65 for c in key.upper() if "A" <= c <= "Z"]
         if sorted(k) != list(range(26)):
-            raise KeyErr("Substitusi: kunci harus permutasi 26 huruf berbeda.")
+            raise KeyErr("Substitution: key must be a permutation of 26 distinct letters.")
     else:
         k = list(range(256))
         random.Random(key).shuffle(k)
@@ -115,12 +115,12 @@ def substitution(data, key, enc, mod, keybytes=None):
 
 
 def hill(data, key, enc, mod, keybytes=None):
-    """Hill: pecah pesan jadi blok n huruf, C = K * P (mod 26) per blok.
-    Dekripsi memakai K^-1. Sisa panjang dipad 'X' (teks) / byte 0 (file)."""
+    """Hill: split message into blocks of n letters, C = K * P (mod 26) per block.
+    Decrypt uses K^-1. Remainder padded with 'X' (text) / byte 0 (file)."""
     k = angka(key)
     n = math.isqrt(len(k))
     if n == 0 or n * n != len(k):
-        raise KeyErr("Hill: jumlah angka kunci harus kuadrat sempurna (4, 9, 16, ...).")
+        raise KeyErr("Hill: key length must be a perfect square (4, 9, 16, ...).")
     m = [[v % mod for v in k[i * n:(i + 1) * n]] for i in range(n)]
     mi = matriks_balikan(m, mod)  # selalu dicek: kunci buruk ketahuan saat enkripsi juga
     mat = m if enc else mi
@@ -128,7 +128,7 @@ def hill(data, key, enc, mod, keybytes=None):
     if enc:
         data = data + [23 if teks else 0] * (-len(data) % n)
     elif len(data) % n:
-        raise KeyErr(f"Hill: panjang cipherteks harus kelipatan {n}.")
+        raise KeyErr(f"Hill: ciphertext length must be a multiple of {n}.")
     out = []
     for i in range(0, len(data), n):
         blok = data[i:i + n]
@@ -147,12 +147,12 @@ def permutation(data, key, enc, mod, keybytes=None):
     p = angka(key)
     m = len(p)
     if m == 0 or sorted(p) != list(range(1, m + 1)):
-        raise KeyErr("Permutasi: kunci harus permutasi 1..m, mis. '3 1 4 2'.")
+        raise KeyErr("Permutation: key must be a permutation 1..m, e.g. '3 1 4 2'.")
     teks = mod == 26
     if enc:
         data = data + [23 if teks else 0] * (-len(data) % m)
     elif len(data) % m:
-        raise KeyErr(f"Permutasi: panjang cipherteks harus kelipatan {m}.")
+        raise KeyErr(f"Permutation: ciphertext length must be a multiple of {m}.")
     out = []
     for i in range(0, len(data), m):
         blok = data[i:i + m]
@@ -182,7 +182,7 @@ def otp(data, key, enc, mod, keybytes=None):
     else:
         kk = list(kb)
     if len(kk) < len(data):
-        raise KeyErr(f"OTP: kunci ({len(kk)}) lebih pendek dari pesan ({len(data)}).")
+        raise KeyErr(f"OTP: key ({len(kk)}) is shorter than message ({len(data)}).")
     tanda = 1 if enc else -1
     return [(x + tanda * kk[i]) % mod for i, x in enumerate(data)]
 
@@ -191,10 +191,10 @@ def playfair(data, key, enc, mod, keybytes=None):
     """Playfair Cipher 5x5: pasangan huruf (digraph), I dan J digabung.
     Hanya mendukung mode teks (alfabet 26 huruf)."""
     if mod != 26:
-        raise KeyErr("Playfair hanya mendukung mode teks (alfabet), bukan file biner.")
+        raise KeyErr("Playfair supports text mode (alphabet) only, not binary files.")
     kata = [c for c in key.upper() if "A" <= c <= "Z"]
     if not kata:
-        raise KeyErr("Playfair: kunci harus berupa kata kunci alfabet (mis. MONARCHY).")
+        raise KeyErr("Playfair: key must be an alphabetic keyword (e.g. MONARCHY).")
     
     mat_list = []
     for c in kata:
@@ -239,7 +239,7 @@ def playfair(data, key, enc, mod, keybytes=None):
             out += proses_pasang(pasang[0], pasang[1])
     else:
         if len(huruf) % 2 != 0:
-            raise KeyErr("Playfair: panjang cipherteks harus genap untuk didekripsi.")
+            raise KeyErr("Playfair: ciphertext length must be even for decryption.")
         for i in range(0, len(huruf), 2):
             out += proses_pasang(huruf[i], huruf[i + 1])
             
@@ -262,5 +262,5 @@ def run(name, data, key, enc, mod, keybytes=None):
     """Pilih cipher sesuai nama; dipanggil route Flask."""
     fungsi = CIPHERS.get(name)
     if fungsi is None:
-        raise KeyErr("Cipher tidak dikenal.")
+        raise KeyErr("Unknown cipher.")
     return fungsi(data, key, enc, mod, keybytes)

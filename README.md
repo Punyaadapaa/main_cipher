@@ -38,29 +38,29 @@ Dibuat dengan **Python + Flask** (GUI berbasis web).
 
 ## Tampilan Program
 
-### 1. Form input (tema Terang)
+### 1. Form input — tema terang
 
-![Form input MainCipher](docs/ui-form-kosong.png)
+![Form input MainCipher pada tema terang](docs/ui-form-kosong.png)
 
 Antarmuka saat pertama dibuka: pilih jenis input (**Text** / **File**), tulis pesan, pilih cipher, isi kunci, lalu pilih format cipherteks (*No spaces* / *Groups of 5 letters*). Tombol **Encrypt!** (hijau) dan **Decrypt!** (merah) ada di bawah.
 
-### 2. Hasil enkripsi (tema Terang)
+### 2. Hasil enkripsi — tema terang
 
-![Hasil enkripsi dan dekripsi](docs/ui-hasil-enkripsi.png)
+![Panel Plaintext dan Ciphertext pada tema terang](docs/ui-hasil-enkripsi.png)
 
-Setelah menekan **Encrypt!**: panel kanan menampilkan **Plaintext** dan **Ciphertext** berdampingan. Contoh: pesan `hanief anak informatika` dengan **Shift Cipher** (kunci `16`) menghasilkan cipherteks `XQDYUVQDQAYDVEHCQJYAQ`. Tombol **Save…** untuk mengunduh hasil sebagai `.txt`.
+Setelah menekan **Encrypt!**, panel kanan menampilkan **Plaintext** dan **Ciphertext** berdampingan. Contoh: pesan `hanief anak informatika` dengan **Shift Cipher** (kunci `16`) menghasilkan cipherteks `XQDYUVQDQAYDVEHCQJYAQ`. Tombol **Save…** mengunduh hasil sebagai `.txt`.
 
-### 3. Tema Gelap
+### 3. Form input — tema gelap
 
-![Tema gelap](docs/ui-dark.png)
+![Form input MainCipher pada tema gelap](docs/ui-dark.png)
 
-Tombol tema di kanan atas mengganti tampilan ke **mode gelap** (label `DARK`). Berguna untuk demo di ruangan gelap dan menunjukkan UI yang responsif terhadap preferensi pengguna.
+Tombol tema di kanan atas mengganti tampilan ke **mode gelap** (label `DARK`). Seluruh komponen — form, textarea, dan tombol — konsisten dengan versi terang.
 
-### 4. Hasil enkripsi (tema Gelap)
+### 4. Hasil enkripsi — tema gelap
 
-![Hasil enkripsi tema gelap](docs/ui-dark-hasil.png)
+![Panel Plaintext dan Ciphertext pada tema gelap](docs/ui-dark-hasil.png)
 
-Tampilan yang sama dalam mode gelap saat menampilkan hasil: **Plaintext** `HANIEFANAKINFORMATIKA` dan **Ciphertext** berdampingan. Seluruh komponen (form, textarea, tombol, dan panel hasil) konsisten di kedua tema.
+Tampilan hasil yang sama dalam mode gelap: **Plaintext** `HANIEFANAKINFORMATIKA` dan **Ciphertext** berdampingan. Tema yang dipilih diingat oleh browser, jadi tidak perlu diatur ulang setiap membuka aplikasi.
 
 ---
 

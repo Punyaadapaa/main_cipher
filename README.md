@@ -48,7 +48,7 @@ Antarmuka saat pertama dibuka: pilih jenis input (**Text** / **File**), tulis pe
 
 ![Panel Plaintext dan Ciphertext pada tema terang](docs/ui-hasil-enkripsi.png)
 
-Setelah menekan **Encrypt!**, panel kanan menampilkan **Plaintext** dan **Ciphertext** berdampingan. Contoh: pesan `hanief anak informatika` dengan **Shift Cipher** (kunci `16`) menghasilkan cipherteks `XQDYUVQDQAYDVEHCQJYAQ`. Tombol **Save…** mengunduh hasil sebagai `.txt`.
+Setelah menekan **Encrypt!**, panel kanan menampilkan **Plaintext** dan **Ciphertext** berdampingan. Contoh: pesan `Program Study Informatika FATISDA UNS adalah salah satu program studi di Fakultas Teknologi Informasi dan Sains Data universitas Sebelas Maret Surakarta yang berdiri sejak ...` dengan **Shift Cipher** (kunci `123`) menghasilkan cipherteks kelompok huruf hasil pergeseran alfabet. Tombol **Save…** mengunduh hasil sebagai `.txt`.
 
 ### 3. Form Input (Tema Gelap)
 
@@ -60,7 +60,7 @@ Tombol tema di kanan atas mengganti tampilan ke **mode gelap** (label `DARK`). S
 
 ![Panel Plaintext dan Ciphertext pada tema gelap](docs/ui-dark-hasil.png)
 
-Tampilan hasil yang sama dalam mode gelap: **Plaintext** `HANIEFANAKINFORMATIKA` dan **Ciphertext** berdampingan. Tema yang dipilih diingat oleh browser, jadi tidak perlu diatur ulang setiap membuka aplikasi.
+Tampilan hasil yang sama dalam mode gelap: **Plaintext** dan **Ciphertext** berdampingan. Tema yang dipilih diingat oleh browser, jadi tidak perlu diatur ulang setiap membuka aplikasi.
 
 ---
 

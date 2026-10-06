@@ -40,9 +40,9 @@ Dibuat dengan **Python + Flask** (GUI berbasis web).
 
 ### 1. Form Input (Tema Terang)
 
-![Form input MainCipher pada tema terang](https://github.com/user-attachments/assets/05117430-dfe8-4f67-9543-4745cfca136d)
+![Form input MainCipher pada tema terang](https://github.com/user-attachments/assets/a9909b40-3bce-4a5a-a555-e290912a5c78)
 
-Antarmuka saat pertama dibuka: pilih jenis input (**Text** / **File**), tulis pesan, pilih cipher, isi kunci, lalu pilih format cipherteks (*No spaces* / *Groups of 5 letters*). Tombol **Encrypt!** (hijau) dan **Decrypt!** (merah) ada di bawah.
+Antarmuka saat pertama dibuka: pilih jenis input (**Text** / **File**), tulis pesan, pilih cipher, isi kunci, lalu pilih format cipherteks (*No spaces* / *Groups of 5 letters*). Tombol **Encrypt!** (hijau) dan **Decrypt!** (merah) ada di bawah. Daftar **Cipher** berisi kedelapan pilihan: Shift, Substitution, Affine, Vigenere, Playfair, Hill, Permutation, dan One-Time Pad.
 
 ### 2. Hasil Enkripsi (Tema Terang)
 
@@ -52,9 +52,9 @@ Setelah menekan **Encrypt!**, panel kanan menampilkan **Plaintext** dan **Cipher
 
 ### 3. Form Input (Tema Gelap)
 
-![Form input MainCipher pada tema gelap](https://github.com/user-attachments/assets/def8539c-42da-401b-bce4-89b88611963f)
+![Form input MainCipher pada tema gelap](https://github.com/user-attachments/assets/2386a7bf-0243-4fa4-acad-26cbd6be8bde)
 
-Tombol tema di kanan atas mengganti tampilan ke **mode gelap** (label `DARK`). Seluruh komponen — form, textarea, dan tombol — konsisten dengan versi terang.
+Tombol tema di kanan atas mengganti tampilan ke **mode gelap** (label `DARK`). Seluruh komponen — form, textarea, daftar cipher (*dropdown*), dan tombol — konsisten dengan versi terang.
 
 ### 4. Hasil Enkripsi (Tema Gelap)
 

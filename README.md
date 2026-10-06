@@ -38,25 +38,25 @@ Dibuat dengan **Python + Flask** (GUI berbasis web).
 
 ## Tampilan Program
 
-### 1. Form input — tema terang
+### 1. Form Input (Tema Terang)
 
 ![Form input MainCipher pada tema terang](docs/ui-form-kosong.png)
 
 Antarmuka saat pertama dibuka: pilih jenis input (**Text** / **File**), tulis pesan, pilih cipher, isi kunci, lalu pilih format cipherteks (*No spaces* / *Groups of 5 letters*). Tombol **Encrypt!** (hijau) dan **Decrypt!** (merah) ada di bawah.
 
-### 2. Hasil enkripsi — tema terang
+### 2. Hasil Enkripsi (Tema Terang)
 
 ![Panel Plaintext dan Ciphertext pada tema terang](docs/ui-hasil-enkripsi.png)
 
 Setelah menekan **Encrypt!**, panel kanan menampilkan **Plaintext** dan **Ciphertext** berdampingan. Contoh: pesan `hanief anak informatika` dengan **Shift Cipher** (kunci `16`) menghasilkan cipherteks `XQDYUVQDQAYDVEHCQJYAQ`. Tombol **Save…** mengunduh hasil sebagai `.txt`.
 
-### 3. Form input — tema gelap
+### 3. Form Input (Tema Gelap)
 
 ![Form input MainCipher pada tema gelap](docs/ui-dark.png)
 
 Tombol tema di kanan atas mengganti tampilan ke **mode gelap** (label `DARK`). Seluruh komponen — form, textarea, dan tombol — konsisten dengan versi terang.
 
-### 4. Hasil enkripsi — tema gelap
+### 4. Hasil Enkripsi (Tema Gelap)
 
 ![Panel Plaintext dan Ciphertext pada tema gelap](docs/ui-dark-hasil.png)
 

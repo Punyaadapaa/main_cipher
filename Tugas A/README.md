@@ -64,10 +64,10 @@ python -m pytest
 
 ---
 
-## Struktur Proyek
+## Struktur Proyek (Bagian A)
 
 ```
-Tugas Kelompok/
+Tugas A/
 ├── ciphers.py          # Logika 8 cipher klasik (mod 26 & mod 256)
 ├── cipher_app.py       # Server Flask & route API (/api/text, /api/file, /api/genkey)
 ├── templates/
@@ -80,6 +80,10 @@ Tugas Kelompok/
 ├── requirements.txt
 └── README.md
 ```
+
+> Kode program Bagian A ada di folder **`Tugas A/`**. Semua perintah di atas
+> (install, run, test) dijalankan dari dalam folder tersebut.
+> Folder **`Tugas B/`** berisi berkas kriptanalisis (Bagian B).
 
 ---
 

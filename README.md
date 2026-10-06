@@ -48,6 +48,12 @@ Dibuat dengan **Python + Flask** (GUI berbasis web).
    ```
    Akses di browser: `http://127.0.0.1:5000`
 
+   > **Port error?** Bila muncul `An attempt was made to access a socket in a way forbidden by its access permissions`, itu karena port 5000 dipakai/diblokir Windows (umumnya di-reserve Hyper-V/WSL). Aplikasi **otomatis pindah ke port bebas** berikutnya dan mencetak alamatnya di terminal (mis. `http://127.0.0.1:5001`). Untuk memilih port sendiri:
+   > ```bash
+   > python cipher_app.py 8000        # lewat argumen
+   > set PORT=8000 && python cipher_app.py   # lewat environment (Windows)
+   > ```
+
 ---
 
 ## Cara Menjalankan Tes

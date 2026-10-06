@@ -1,12 +1,14 @@
 """
 Aplikasi Kriptografi Klasik (GUI Web, Flask)
 Jalankan:  pip install flask  &&  python cipher_app.py   ->  buka http://127.0.0.1:5000
+           Ganti port :  python cipher_app.py 8000   (atau: set PORT=8000)
+           Bila port 5000 terblokir Windows, aplikasi otomatis pindah port bebas.
 
 Mode TEKS : alfabet 26 huruf (A-Z). Karakter non-huruf dibuang.
 Mode FILE : semua byte (termasuk header) diproses dengan versi mod 256 dari cipher yang sama.
 Struktur  : ciphers.py (logika cipher) · templates/ + static/ (antarmuka) · file ini (route).
 """
-import io, secrets, struct
+import io, os, secrets, struct
 from urllib.parse import quote
 from flask import Flask, render_template, request, jsonify, send_file
 
@@ -105,5 +107,29 @@ def index():
     return render_template("index.html")
 
 
+def pilih_port(mulai=5000, percobaan=10):
+    """Cari port yang bisa dipakai. Mulai dari `mulai`, naik bila terblokir
+    (mis. port 5000 di-reserve Hyper-V/WSL di Windows). 0 = biar OS memilih."""
+    import socket
+    for p in range(mulai, mulai + percobaan):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            try:
+                s.bind(("127.0.0.1", p))
+                return p
+            except OSError:
+                continue
+    return 0  # serahkan ke OS
+
+
 if __name__ == "__main__":
-    app.run(debug=False)
+    import sys
+    # Port bisa dipilih: `python cipher_app.py 8000` atau `set PORT=8000`.
+    # Default 5000; bila terblokir, otomatis cari port bebas berikutnya.
+    arg = sys.argv[1] if len(sys.argv) > 1 else os.environ.get("PORT")
+    if arg:
+        port = int(arg)
+    else:
+        port = pilih_port(5000)
+    print(f"\n  MainCipher berjalan di  ->  http://127.0.0.1:{port}\n")
+    app.run(host="127.0.0.1", port=port, debug=False)

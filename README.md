@@ -30,7 +30,7 @@ Dibuat dengan **Python + Flask** (GUI berbasis web).
 
 3. **Fitur Tambahan:**
    - Pembangkit file kunci OTP acak dengan panjang yang bisa diatur (default 50.000 huruf)
-   - Mode Terang / Gelap (Light / Dark Theme), diingat lewat `localStorage`
+   - Mode Terang / Gelap (Light / Dark Theme), dengan tombol di kanan atas, pilihan tema diingat lewat `localStorage`
    - Verifikasi hasil otomatis saat mengetik
    - Simpan hasil plaintext / ciphertext ke file `.txt`
 

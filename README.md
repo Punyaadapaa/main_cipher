@@ -29,9 +29,32 @@ Dibuat dengan **Python + Flask** (GUI berbasis web).
    - **Mode File:** membaca dan mengenkripsi seluruh byte file sembarang (termasuk header file) dengan aritmetika modulo 256. Hasil disimpan sebagai `.dat` dengan metadata magic `PYCF` untuk pemulihan nama & ekstensi asli secara otomatis saat didekripsi. Playfair tidak tersedia untuk mode file (hanya alfabet).
 
 3. **Fitur Tambahan:**
-   - Pembangkit file kunci OTP acak (default 50.000 huruf)
-   - Mode Terang / Gelap (Light / Dark Theme)
+   - Pembangkit file kunci OTP acak dengan panjang yang bisa diatur (default 50.000 huruf)
+   - **Mode Terang / Gelap (Light / Dark Theme)** — tombol di kanan atas untuk beralih tema. Pilihan tema diingat (disimpan di `localStorage`) dan otomatis mengikuti tema sistem saat pertama kali dibuka.
+   - Verifikasi hasil otomatis saat mengetik
    - Simpan hasil plaintext / ciphertext ke file `.txt`
+
+---
+
+## Tampilan Program
+
+### 1. Form input (tema Terang)
+
+![Form input MainCipher](docs/ui-form-kosong.png)
+
+Antarmuka saat pertama dibuka: pilih jenis input (**Text** / **File**), tulis pesan, pilih cipher, isi kunci, lalu pilih format cipherteks (*No spaces* / *Groups of 5 letters*). Tombol **Encrypt!** (hijau) dan **Decrypt!** (merah) ada di bawah.
+
+### 2. Hasil enkripsi (tema Terang)
+
+![Hasil enkripsi dan dekripsi](docs/ui-hasil-enkripsi.png)
+
+Setelah menekan **Encrypt!**: panel kanan menampilkan **Plaintext** dan **Ciphertext** berdampingan. Contoh: pesan `hanief anak informatika` dengan **Shift Cipher** (kunci `16`) menghasilkan cipherteks `XQDYUVQDQAYDVEHCQJYAQ`. Tombol **Save…** untuk mengunduh hasil sebagai `.txt`.
+
+### 3. Tema Gelap
+
+![Tema gelap](docs/ui-dark.png)
+
+Tombol tema di kanan atas mengganti tampilan ke **mode gelap** (label `DARK`). Berguna untuk demo di ruangan gelap dan menunjukkan UI yang responsif terhadap preferensi pengguna.
 
 ---
 

@@ -162,6 +162,33 @@ def test_genkey_n_tidak_valid(klien):
     assert "error" in r.get_json()
 
 
+def test_genkey_n_bisa_diatur(klien):
+    # UI kini mengirim panjang kunci dari input; backend harus menghormatinya.
+    r = klien.get("/api/genkey?n=12345")
+    assert r.status_code == 200
+    assert len(r.data.decode()) == 12345
+
+
+def test_vigenere_file_kunci_kosong_400_bukan_500(klien):
+    # Regresi: dulu ZeroDivisionError -> HTTP 500. Sekarang harus 400 JSON.
+    r = klien.post("/api/file", data={
+        "cipher": "vigenere", "mode": "enc", "key": "",
+        "file": (BytesIO(b"hello world"), "a.bin")},
+        content_type="multipart/form-data")
+    assert r.status_code == 400
+    assert r.is_json
+    assert "error" in r.get_json()
+
+
+def test_substitution_file_kunci_kosong_400(klien):
+    r = klien.post("/api/file", data={
+        "cipher": "substitution", "mode": "enc", "key": "",
+        "file": (BytesIO(b"hello world"), "a.bin")},
+        content_type="multipart/form-data")
+    assert r.status_code == 400
+    assert r.is_json
+
+
 # ---------- pemisahan antarmuka: HTML/CSS/JS di templates/ + static/ ----------
 
 def test_aset_css_dan_js_tersedia(klien):

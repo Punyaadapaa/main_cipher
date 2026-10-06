@@ -214,6 +214,31 @@ def test_playfair_tolak_mode_file():
         run("playfair", [1, 2, 3], "MONARCHY", True, 256)
 
 
+# ---------- regresi: kunci kosong di SEMUA cipher -> KeyErr (bukan crash) -------
+
+NAMA_CIPHER = ["shift", "substitution", "affine", "vigenere",
+               "hill", "permutation", "otp", "playfair"]
+
+
+@pytest.mark.parametrize("nama", NAMA_CIPHER)
+def test_kunci_kosong_mode_teks_tidak_crash(nama):
+    # Semua cipher harus melempar KeyErr untuk kunci kosong, bukan exception lain.
+    with pytest.raises(KeyErr):
+        run(nama, A("TEST"), "", True, 26)
+
+
+@pytest.mark.parametrize("nama", NAMA_CIPHER)
+def test_kunci_kosong_mode_file_tidak_crash(nama):
+    # Regresi bug: Vigenere mode file dengan kunci kosong dulu ZeroDivisionError.
+    with pytest.raises(KeyErr):
+        run(nama, [1, 2, 3, 4], "", True, 256)
+
+
+def test_vigenere_file_kunci_kosong_pesan_jelas():
+    with pytest.raises(KeyErr, match="empty"):
+        run("vigenere", [1, 2, 3], "", True, 256)
+
+
 def test_cipher_tidak_dikenal():
     with pytest.raises(KeyErr):
         run("cipher_palsu", A("TEST"), "x", True, 26)

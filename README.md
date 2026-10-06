@@ -75,7 +75,7 @@ python -m pytest
 │   ├── style.css       # Styling responsif & tema terang/gelap
 │   └── app.js          # Logika frontend & handler API
 ├── test_ciphers.py     # 45 unit test logika cipher (round-trip, vektor klasik)
-├── test_app.py         # Integration test route & UI Flask (total 68 tes)
+├── test_app.py         # Integration test route & UI Flask (total 88 tes)
 ├── requirements.txt
 └── README.md
 ```
@@ -102,7 +102,7 @@ python -m pytest
 | 1 | Terima pesan file / ketikan | ✅ | Radio *Input type: Text / File* |
 | 2 | Hanya enkripsi huruf alfabet (Vigenere/Playfair/OTP) | ✅ | Karakter non-huruf dibuang |
 | 3 | OTP kunci dari file huruf acak (banyak) | ✅ | Tombol *Generate* 50.000 huruf |
-| 4 | Dekripsi mengembalikan plainteks semula | ✅ | Terverifikasi 68 tes otomatis |
+| 4 | Dekripsi mengembalikan plainteks semula | ✅ | Terverifikasi 88 tes otomatis |
 | 5 | Tampil plainteks + cipherteks (tanpa spasi / 5-huruf) | ✅ | Radio *Ciphertext format* |
 | 6 | Simpan cipherteks ke file | ✅ | Tombol *Save…* / mode file `.dat` |
 | 7 | Kunci dari pengguna, panjang bebas | ✅ | Kolom *Key* |
@@ -114,4 +114,8 @@ python -m pytest
 
 - **Playfair** hanya untuk mode teks (alfabet); mode file ditolak dengan pesan jelas.
 - **Playfair** mengikuti aturan standar: huruf kembar disisipi `X`, panjang ganjil dipad `X`. Huruf `J` dipetakan ke `I`. Huruf pengisi dibuang kembali saat dekripsi (kecuali `X` asli di ujung yang ambigu).
-- **Hill & Permutasi mode teks** memakai padding yang tersimpan di cipherteks, sehingga plainteks berakhiran `X` tidak ikut terpotong.
+- **Hill & Permutasi mode teks** memakai padding yang tersimpan di cipherteks, sehingga plainteks berakhiran `X` tidak ikut terpotong. Konsekuensinya cipherteks selalu kelipatan ukuran blok (mis. `ACT` menjadi `POHKAA`), bukan bug melainkan keputusan desain agar dekripsi deterministik.
+- **Permutasi mode teks** dibatasi ukuran blok ≤ 26 karena padding menyimpan nilai 0–25. Untuk blok lebih besar, gunakan mode file (atau hill).
+- **OTP** memerlukan kunci **sepanjang pesan**. Panjang kunci yang dibangkitkan bisa diatur lewat kolom *Key length* di UI (default 50.000). Untuk file besar (gambar/audio/video, ratusan KB–MB), naikkan panjang kunci agar tidak lebih pendek dari pesan.
+- **File sangat besar** diproses byte-per-byte sehingga butuh waktu & memori; untuk demo gunakan file berukuran wajar.
+- **Kunci tidak valid / kosong** selalu menghasilkan pesan error (HTTP 400), bukan crash server.

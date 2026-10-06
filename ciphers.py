@@ -123,6 +123,8 @@ def vigenere(data, key, enc, mod, keybytes=None):
             raise KeyErr("Vigenere: key is empty (text mode requires letters).")
     else:
         kk = list(key.encode())
+        if not kk:
+            raise KeyErr("Vigenere: key is empty (file mode requires at least one character).")
     tanda = 1 if enc else -1
     return [(x + tanda * kk[i % len(kk)]) % mod for i, x in enumerate(data)]
 
@@ -137,6 +139,8 @@ def substitution(data, key, enc, mod, keybytes=None):
         if sorted(k) != list(range(26)):
             raise KeyErr("Substitution: key must be a permutation of 26 distinct letters.")
     else:
+        if not key:
+            raise KeyErr("Substitution: key must not be empty (file mode uses it as the table seed).")
         k = list(range(256))
         random.Random(key).shuffle(k)
     if not enc:

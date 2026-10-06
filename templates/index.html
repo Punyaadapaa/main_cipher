@@ -74,7 +74,12 @@
           <div id="otp-key" hidden>
             <label class="sublabel" for="keyfile">OTP key file (text file containing random letters):</label>
             <input type="file" id="keyfile" accept=".txt">
-            <button type="button" class="btn ghost small" id="genkey">Generate 50,000 random-letter key</button>
+            <div class="otp-gen-row">
+              <label class="sublabel otp-gen-lbl" for="otp-len">Key length (letters):</label>
+              <input type="number" id="otp-len" value="50000" min="1" max="5000000" step="1000" inputmode="numeric">
+              <button type="button" class="btn ghost small" id="genkey">Generate key</button>
+            </div>
+            <p class="hint">Use a key at least as long as the message. For images, audio, or video, raise the length (e.g. 1,000,000+).</p>
           </div>
         </div>
       </div>

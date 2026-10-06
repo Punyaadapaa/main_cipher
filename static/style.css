@@ -96,6 +96,9 @@ main.wrap{margin:0 auto}
 
 label.sublabel{display:block;font-size:12px;font-weight:650;letter-spacing:-.01em;margin:14px 0 6px;color:var(--text)}
 .hint{color:var(--muted);font-size:12px;line-height:1.5;margin:7px 0 0}
+.otp-gen-row{display:flex;align-items:center;gap:10px;margin-top:6px;flex-wrap:wrap}
+.otp-gen-lbl{margin:0;white-space:nowrap}
+.otp-gen-row input[type=number]{width:130px;flex:0 0 auto}
 
 /* inputs */
 input,select,textarea{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);font:inherit;transition:border-color .15s, box-shadow .15s, background-color .35s ease, color .35s ease}

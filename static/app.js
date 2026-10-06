@@ -163,6 +163,10 @@ $("save-plain").addEventListener("click", () => { if (hasil.plain) unduh(hasil.p
 $("save-cipher").addEventListener("click", () => { if (hasil.cipher) unduh(hasil.cipher, "ciphertext.txt"); else $("err").textContent = "No ciphertext to save — run Encrypt or Decrypt first."; });
 $("unduh-file").addEventListener("click", () => { if (hasil.blob) unduh(hasil.blob, hasil.nama); });
 $("genkey").addEventListener("click", async () => {
-  const r = await fetch("/api/genkey?n=50000");
+  const n = parseInt($("otp-len").value, 10);
+  if (!Number.isFinite(n) || n < 1) { $("err").textContent = "Key length must be a positive number."; return; }
+  $("err").textContent = "";
+  const r = await fetch("/api/genkey?n=" + encodeURIComponent(n));
   if (r.ok) unduh(await r.blob(), "otp_key.txt");
+  else $("err").textContent = (await r.json()).error;
 });

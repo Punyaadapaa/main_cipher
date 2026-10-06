@@ -40,25 +40,25 @@ Dibuat dengan **Python + Flask** (GUI berbasis web).
 
 ### 1. Form Input (Tema Terang)
 
-![Form input MainCipher pada tema terang](screenshot-terang.png)
+![Form input MainCipher pada tema terang](https://github.com/user-attachments/assets/05117430-dfe8-4f67-9543-4745cfca136d)
 
 Antarmuka saat pertama dibuka: pilih jenis input (**Text** / **File**), tulis pesan, pilih cipher, isi kunci, lalu pilih format cipherteks (*No spaces* / *Groups of 5 letters*). Tombol **Encrypt!** (hijau) dan **Decrypt!** (merah) ada di bawah.
 
 ### 2. Hasil Enkripsi (Tema Terang)
 
-![Panel Plaintext dan Ciphertext pada tema terang](screenshot-terang-hasil.png)
+![Panel Plaintext dan Ciphertext pada tema terang](https://github.com/user-attachments/assets/67683153-7c11-4a99-8bfb-e31e5977c625)
 
 Setelah menekan **Encrypt!**, panel kanan menampilkan **Plaintext** dan **Ciphertext** berdampingan. Contoh: pesan `Program Study Informatika FATISDA UNS adalah salah satu program studi di Fakultas Teknologi Informasi dan Sains Data universitas Sebelas Maret Surakarta yang berdiri sejak ...` dengan **Shift Cipher** (kunci `123`) menghasilkan cipherteks kelompok huruf hasil pergeseran alfabet. Tombol **Save…** mengunduh hasil sebagai `.txt`.
 
 ### 3. Form Input (Tema Gelap)
 
-![Form input MainCipher pada tema gelap](screenshot-gelap.png)
+![Form input MainCipher pada tema gelap](https://github.com/user-attachments/assets/def8539c-42da-401b-bce4-89b88611963f)
 
 Tombol tema di kanan atas mengganti tampilan ke **mode gelap** (label `DARK`). Seluruh komponen — form, textarea, dan tombol — konsisten dengan versi terang.
 
 ### 4. Hasil Enkripsi (Tema Gelap)
 
-![Panel Plaintext dan Ciphertext pada tema gelap](screenshot-gelap-hasil.png)
+![Panel Plaintext dan Ciphertext pada tema gelap](https://github.com/user-attachments/assets/1acb426f-f133-44ed-adc8-5c0ead404962)
 
 Tampilan hasil yang sama dalam mode gelap: **Plaintext** dan **Ciphertext** berdampingan. Tema yang dipilih diingat oleh browser, jadi tidak perlu diatur ulang setiap membuka aplikasi.
 

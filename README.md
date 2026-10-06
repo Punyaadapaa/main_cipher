@@ -56,6 +56,12 @@ Setelah menekan **Encrypt!**: panel kanan menampilkan **Plaintext** dan **Cipher
 
 Tombol tema di kanan atas mengganti tampilan ke **mode gelap** (label `DARK`). Berguna untuk demo di ruangan gelap dan menunjukkan UI yang responsif terhadap preferensi pengguna.
 
+### 4. Hasil enkripsi (tema Gelap)
+
+![Hasil enkripsi tema gelap](docs/ui-dark-hasil.png)
+
+Tampilan yang sama dalam mode gelap saat menampilkan hasil: **Plaintext** `HANIEFANAKINFORMATIKA` dan **Ciphertext** berdampingan. Seluruh komponen (form, textarea, tombol, dan panel hasil) konsisten di kedua tema.
+
 ---
 
 ## Cara Menjalankan

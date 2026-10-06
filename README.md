@@ -1,4 +1,4 @@
-# >_ MainCipher — Aplikasi Kriptografi Klasik Online (GUI Web)
+﻿# >_ MainCipher — Aplikasi Kriptografi Klasik Online (GUI Web)
 
 Aplikasi web untuk enkripsi dan dekripsi menggunakan 8 cipher klasik. Memenuhi spesifikasi tugas mata kuliah Kriptografi.
 
@@ -40,25 +40,25 @@ Dibuat dengan **Python + Flask** (GUI berbasis web).
 
 ### 1. Form Input (Tema Terang)
 
-![Form input MainCipher pada tema terang](docs/ui-form-kosong.png)
+![Form input MainCipher pada tema terang](screenshot-terang.png)
 
 Antarmuka saat pertama dibuka: pilih jenis input (**Text** / **File**), tulis pesan, pilih cipher, isi kunci, lalu pilih format cipherteks (*No spaces* / *Groups of 5 letters*). Tombol **Encrypt!** (hijau) dan **Decrypt!** (merah) ada di bawah.
 
 ### 2. Hasil Enkripsi (Tema Terang)
 
-![Panel Plaintext dan Ciphertext pada tema terang](docs/ui-hasil-enkripsi.png)
+![Panel Plaintext dan Ciphertext pada tema terang](screenshot-terang-hasil.png)
 
 Setelah menekan **Encrypt!**, panel kanan menampilkan **Plaintext** dan **Ciphertext** berdampingan. Contoh: pesan `Program Study Informatika FATISDA UNS adalah salah satu program studi di Fakultas Teknologi Informasi dan Sains Data universitas Sebelas Maret Surakarta yang berdiri sejak ...` dengan **Shift Cipher** (kunci `123`) menghasilkan cipherteks kelompok huruf hasil pergeseran alfabet. Tombol **Save…** mengunduh hasil sebagai `.txt`.
 
 ### 3. Form Input (Tema Gelap)
 
-![Form input MainCipher pada tema gelap](docs/ui-dark.png)
+![Form input MainCipher pada tema gelap](screenshot-gelap.png)
 
 Tombol tema di kanan atas mengganti tampilan ke **mode gelap** (label `DARK`). Seluruh komponen — form, textarea, dan tombol — konsisten dengan versi terang.
 
 ### 4. Hasil Enkripsi (Tema Gelap)
 
-![Panel Plaintext dan Ciphertext pada tema gelap](docs/ui-dark-hasil.png)
+![Panel Plaintext dan Ciphertext pada tema gelap](screenshot-gelap-hasil.png)
 
 Tampilan hasil yang sama dalam mode gelap: **Plaintext** dan **Ciphertext** berdampingan. Tema yang dipilih diingat oleh browser, jadi tidak perlu diatur ulang setiap membuka aplikasi.
 

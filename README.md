@@ -105,9 +105,26 @@ python -m pytest
 │   └── app.js          # Logika frontend & handler API
 ├── test_ciphers.py     # 66 unit test logika cipher (round-trip, vektor klasik)
 ├── test_app.py         # 22 integration test route & UI Flask (total 88 tes)
+├── sample/             # Berkas contoh untuk uji (asli + hasil enkripsi .dat)
 ├── requirements.txt
 └── README.md
 ```
+
+---
+
+## Berkas Contoh (folder `sample/`)
+
+Folder `sample/` berisi lima jenis berkas untuk demonstrasi pengujian mode **File**, masing-masing disertai hasil enkripsinya (`.dat`):
+
+| Berkas Asli | Hasil Enkripsi | Jenis |
+|-------------|----------------|-------|
+| `contoh.txt` | `contoh.txt.dat` | Teks |
+| `database.sql` | `database.sql.dat` | Basis data |
+| `sby.jpg` | `sby.jpg.dat` | Gambar (JPEG) |
+| `jokowi saya akan lawan - Meme Effect Sound.mp3` | `*.mp3.dat` | Audio (MP3) |
+| `pidato gibran ... .mp4` | `*.mp4.dat` | Video (MP4) |
+
+Berkas `.dat` adalah keluaran enkripsi aplikasi ini (magic `PYCF`) yang menyimpan nama & ekstensi asli, sehingga dapat didekripsi kembali memakai kunci yang sesuai.
 
 ---
 

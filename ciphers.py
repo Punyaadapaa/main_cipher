@@ -1,5 +1,5 @@
 """
-Logika 7 cipher klasik untuk aplikasi kriptografi.
+Logika 8 cipher klasik untuk aplikasi kriptografi.
 
 Semua fungsi bekerja pada daftar bilangan bulat:
   - mode teks : mod 26, A=0 .. Z=25 (huruf lain sudah dibuang di route Flask)

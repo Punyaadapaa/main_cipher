@@ -142,9 +142,9 @@ python -m pytest
 ## Catatan / Batasan
 
 - **Playfair** hanya untuk mode teks (alfabet); mode file ditolak dengan pesan jelas.
-- **Playfair** mengikuti aturan standar: huruf kembar disisipi `X`, panjang ganjil dipad `X`. Huruf `J` dipetakan ke `I`. Huruf pengisi dibuang kembali saat dekripsi (kecuali `X` asli di ujung yang ambigu).
-- **Hill & Permutasi mode teks** memakai padding yang tersimpan di cipherteks, sehingga plainteks berakhiran `X` tidak ikut terpotong. Konsekuensinya cipherteks selalu kelipatan ukuran blok (mis. `ACT` menjadi `POHKAA`), bukan bug melainkan keputusan desain agar dekripsi deterministik.
-- **Permutasi mode teks** dibatasi ukuran blok ≤ 26 karena padding menyimpan nilai 0–25. Untuk blok lebih besar, gunakan mode file (atau hill).
+- **Playfair** mengikuti aturan standar: huruf kembar disisipi `X`, panjang ganjil dipad `X`. Huruf `J` dipetakan ke `I`. Huruf pengisi dibuang kembali saat dekripsi, sehingga `X` asli di akhir pesan maupun `X` asli di antara dua huruf kembar (mis. `LXL`) dapat ikut terbuang — keterbatasan bawaan skema pengisi `X`.
+- **Hill & Permutasi mode teks** memakai padding ala PKCS#7 yang jumlahnya tersimpan di cipherteks, sehingga plainteks berakhiran `X` tidak ikut terpotong. Konsekuensinya cipherteks selalu kelipatan ukuran blok, bukan bug melainkan keputusan desain agar dekripsi deterministik. Contoh pada **Hill** blok 3 dengan kunci `POH`: `ACT` (+padding `CCC`) menjadi `POHKAA`.
+- **Permutasi mode teks** dibatasi ukuran blok **≤ 26** karena padding menyimpan nilai 0–25.
 - **OTP** memerlukan kunci **sepanjang pesan**. Panjang kunci yang dibangkitkan bisa diatur lewat kolom *Key length* di UI (default 50.000). Untuk file besar (gambar/audio/video, ratusan KB–MB), naikkan panjang kunci agar tidak lebih pendek dari pesan.
 - **File sangat besar** diproses byte-per-byte sehingga butuh waktu & memori; untuk demo gunakan file berukuran wajar.
 - **Kunci tidak valid / kosong** selalu menghasilkan pesan error (HTTP 400), bukan crash server.

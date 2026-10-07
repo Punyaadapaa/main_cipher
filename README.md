@@ -16,7 +16,7 @@ Dibuat dengan **Python + Flask** (GUI berbasis web).
 
 1. **8 Cipher Klasik:**
    - **Shift Cipher** (Caesar, geser 1 angka)
-   - **Substitution Cipher** (monoalfabet, tabel permutasi 26 huruf)
+   - **Substitution Cipher** (monoalfabet: mode teks memakai tabel permutasi 26 huruf A–Z; mode berkas memakai string kunci sebagai *seed* tabel permutasi 256 byte)
    - **Affine Cipher** ($C = (a \cdot P + b) \pmod m$)
    - **Vigenere Cipher** (kunci alfabet diulang)
    - **Playfair Cipher** (matriks $5 \times 5$, I/J digabung; khusus mode teks/alfabet)
@@ -103,8 +103,8 @@ python -m pytest
 ├── static/
 │   ├── style.css       # Styling responsif & tema terang/gelap
 │   └── app.js          # Logika frontend & handler API
-├── test_ciphers.py     # 45 unit test logika cipher (round-trip, vektor klasik)
-├── test_app.py         # Integration test route & UI Flask (total 88 tes)
+├── test_ciphers.py     # 66 unit test logika cipher (round-trip, vektor klasik)
+├── test_app.py         # 22 integration test route & UI Flask (total 88 tes)
 ├── requirements.txt
 └── README.md
 ```
@@ -116,7 +116,7 @@ python -m pytest
 | No | Spesifikasi | Berhasil | Keterangan |
 |----|-------------|:--------:|------------|
 | 1 | Shift Cipher | ✅ | Geser alfabet 1 angka (Caesar) |
-| 2 | Substitution Cipher | ✅ | Tabel permutasi 26 huruf |
+| 2 | Substitution Cipher | ✅ | Teks: tabel permutasi 26 huruf; berkas: string kunci jadi *seed* tabel 256 byte |
 | 3 | Affine Cipher | ✅ | $C = (aP + b) \bmod m$, cek koprima |
 | 4 | Vigenere Cipher | ✅ | Kunci alfabet diulang sepanjang pesan |
 | 5 | Hill Cipher | ✅ | Matriks $n \times n$ + balikan modulo; padding PKCS-like |
